@@ -72,6 +72,15 @@ flowchart TD
 - **Interactive Metric Trends**: Recharts time-series visualization with warning/critical threshold lines and service selection.
 - **Benchmark Evaluation**: Evaluates True Positives, False Positives, True Negatives, False Negatives, Precision, Recall, F1-Score, and False Positive Rate across 200 labeled observations.
 
+### 2.3. Module 3: Cascading Failure Prediction Engine
+- **Reverse Propagation Graph ($G_{prop} = G^{rev}$)**: Inverts callee $\to$ caller dependencies (e.g. Payment $\to$ Order $\to$ API Gateway) to model downstream blast radius.
+- **Multi-Hop Traversal & Cycle Safety**: Cycle-safe BFS traversal with cutoff and non-cyclic path extraction (`nx.all_simple_paths`).
+- **Normalized 0–100 Risk Scoring**: Combines base failure severity (`severe: 95`, `moderate: 70`, `mild: 40`), protocol coupling decay (`sync_http: 1.0`, `database_read_write: 0.95`, `async_message: 0.45`, `cache_lookup: 0.40`), attenuation factor, and Module 2 active anomaly alert telemetry amplification.
+- **Multi-Path Confluence Risk Combination**: Independent probabilistic combination $R_{comb} = 100 \times (1 - \prod (1 - r_i / 100))$.
+- **Discrete Time-Step Simulation Timeline**: Step-by-step failure wave progression tracking wave onset (+0s, +15s, +30s...), newly affected callers, cumulative blast radius, and average risk.
+- **Ground-Truth Benchmark Comparison**: Evaluates Baseline Simple Traversal vs Static Rule Scoring vs Evidence-Aware Cascade across 5 synthetic cloud architectures.
+- **Interactive Cyber-Resilience UI**: Cytoscape.js directed dashed propagation paths, failure scenario presets, timeline scrubber, and scenario comparison matrix.
+
 ---
 
 ## 3. REST API Reference
@@ -103,12 +112,25 @@ flowchart TD
 - `GET /api/anomalies/evaluation`: Benchmark comparative metrics (Precision, Recall, F1)
 - `POST /api/anomalies/{alert_id}/acknowledge`: Acknowledge an alert
 
+### Module 3 Endpoints (Cascading Failure Prediction)
+- `GET /api/cascade/health`: Cascade engine health status & capabilities
+- `GET /api/cascade/summary`: Cluster-wide cascade risk overview & latest simulation metrics
+- `POST /api/cascade/predict`: Predict blast radius, risk scores, and evidence for a failure scenario
+- `POST /api/cascade/simulate`: Execute discrete time-step failure simulation timeline
+- `GET /api/cascade/impact/{service_id}`: Directly and indirectly impacted callers for a service
+- `GET /api/cascade/paths/{service_id}`: Propagation paths emerging from failing service
+- `GET /api/cascade/scenarios`: List saved simulation scenarios (paginated)
+- `POST /api/cascade/scenarios`: Save a simulation scenario and its prediction results into SQLite
+- `GET /api/cascade/scenarios/{id}`: Retrieve saved scenario details
+- `DELETE /api/cascade/scenarios/{id}`: Delete a saved scenario
+- `GET /api/cascade/evaluation`: Benchmark comparative metrics against synthetic ground-truth
+- `POST /api/cascade/compare`: Side-by-side comparative blast radius analysis across scenarios
+
 ---
 
 ## 4. Benchmark Evaluation Results
 
-Evaluated across **200 labeled observations** (160 normal, 40 anomalous):
-
+### Module 2 Anomaly Detection Benchmark (200 Labeled Observations)
 | Metric | 1. Threshold Rules | 2. Isolation Forest (ML) | 3. Combined Alerting |
 | :--- | :---: | :---: | :---: |
 | **Precision** | ~95.2% | ~85.4% | ~93.0% |
@@ -117,7 +139,16 @@ Evaluated across **200 labeled observations** (160 normal, 40 anomalous):
 | **Accuracy** | 90.0% | 94.5% | **98.5%** |
 | **False Positive Rate** | 0.6% | 3.8% | 1.9% |
 
-*Key finding: Threshold rules catch single-metric spikes with near-zero false alarms; Isolation Forest detects subtle multivariate anomalies; the combined approach maximizes recall and prevents blind spots.*
+### Module 3 Cascade Prediction Benchmark (5 Synthetic Topology Archetypes)
+| Metric | 1. Baseline Simple Traversal | 2. Static Rule Scoring | 3. Evidence-Aware Cascade (Mod 3) |
+| :--- | :---: | :---: | :---: |
+| **Precision** | 70.0% | 77.8% | **100.0%** |
+| **Recall** | 100.0% | 100.0% | **100.0%** |
+| **F1-Score** | 0.824 | 0.875 | **1.000** |
+| **False Positive Rate** | 60.0% | 40.0% | **0.0%** |
+| **Detection Coverage** | 100.0% | 100.0% | **100.0%** |
+
+*Key finding: Evidence-Aware Cascade eliminates false alarms in decoupled asynchronous and cached communication channels (0.0% FPR) while maintaining 100% recall on high-risk multi-hop synchronous cascades.*
 
 ---
 
@@ -129,7 +160,7 @@ From the root workspace:
 cd "backend"
 python -m pytest -v
 ```
-*(Runs all 47 tests across Module 1 and Module 2).*
+*(Runs all 69 tests across Module 1, Module 2, and Module 3 with 100% pass rate).*
 
 ### 5.2. Start FastAPI Backend
 ```powershell
@@ -146,11 +177,12 @@ cd "frontend"
 npm run dev
 ```
 - Open `http://localhost:5173` in your browser.
-- Switch between **Digital Twin & Graph (Module 1)** and **Anomaly Detection (Module 2)** using the top navigation bar.
+- Switch between **Digital Twin & Graph (Module 1)**, **Anomaly Detection (Module 2)**, and **Cascade Engine (Module 3)** using the top navigation bar.
 
 ---
 
 ## 6. Assumptions & Limitations
-1. **Simulated Telemetry**: All metrics are synthetic for cloud resilience simulation. Real live credentials are not required.
-2. **Investigation Flag**: An anomaly indicates unusual behavior and triggers an early warning; it is not classified as an outage without supporting evidence.
-3. **Integration Ready**: Prepared for Module 3 (Cascading Failure Prediction), Module 4 (Root Cause Analysis), and Module 5 (Diagnostic Agent).
+1. **Simulated Telemetry**: All metrics and failure waves are non-destructive in-memory simulations for cloud resilience decision-support.
+2. **Decision Support**: Heuristic risk scores reflect vulnerability and coupling severity rather than absolute failure guarantees.
+3. **Integration Ready**: Prepared for Module 4 (Root Cause Analysis Engine) and Module 5 (Diagnostic Agent).
+
