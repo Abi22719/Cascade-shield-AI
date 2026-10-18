@@ -8,10 +8,15 @@ import ServiceModal from './components/ServiceModal';
 import DependencyModal from './components/DependencyModal';
 import ConfirmModal from './components/ConfirmModal';
 import NotificationToast from './components/NotificationToast';
+import AnomalyDashboard from './pages/AnomalyDashboard';
 import { api } from './services/api';
+import { anomalyApi } from './services/anomalyApi';
 import './styles/App.css';
 
 export default function App() {
+  const [activeModule, setActiveModule] = useState('digital-twin'); // 'digital-twin' | 'anomaly-detection'
+  const [unacknowledgedCount, setUnacknowledgedCount] = useState(0);
+
   const [graphData, setGraphData] = useState({ nodes: [], edges: [], summary: {}, cycles: [] });
   const [metricsSummary, setMetricsSummary] = useState(null);
   const [servicesList, setServicesList] = useState([]);
@@ -35,13 +40,13 @@ export default function App() {
   // Toasts
   const [toasts, setToasts] = useState([]);
 
-  const addToast = (message, type = 'info', title = null) => {
+  const addToast = useCallback((message, type = 'info', title = null) => {
     const id = Date.now() + Math.random().toString(36).substring(2, 6);
     setToasts(prev => [...prev, { id, message, type, title }]);
     setTimeout(() => {
       setToasts(prev => prev.filter(t => t.id !== id));
     }, 4500);
-  };
+  }, []);
 
   const removeToast = (id) => {
     setToasts(prev => prev.filter(t => t.id !== id));
@@ -51,15 +56,19 @@ export default function App() {
   const loadDigitalTwin = useCallback(async () => {
     setLoading(true);
     try {
-      const [graph, metrics, services] = await Promise.all([
+      const [graph, metrics, services, anomalySum] = await Promise.all([
         api.getGraph(),
         api.getMetricsSummary(),
-        api.getServices()
+        api.getServices(),
+        anomalyApi.getSummary().catch(() => ({ unacknowledged_alerts: 0 }))
       ]);
 
       setGraphData(graph);
       setMetricsSummary(metrics);
       setServicesList(services);
+      if (anomalySum && anomalySum.unacknowledged_alerts !== undefined) {
+        setUnacknowledgedCount(anomalySum.unacknowledged_alerts);
+      }
 
       // Refresh selectedNode if it is currently open
       if (selectedNode) {
@@ -74,11 +83,11 @@ export default function App() {
     } finally {
       setLoading(false);
     }
-  }, [selectedNode?.id]);
+  }, [selectedNode?.id, addToast]);
 
   useEffect(() => {
     loadDigitalTwin();
-  }, []);
+  }, [loadDigitalTwin]);
 
   // Selection handlers
   const handleSelectNode = (nodeData) => {
@@ -241,6 +250,9 @@ export default function App() {
     <div className="app-container">
       {/* Header */}
       <Navbar
+        activeModule={activeModule}
+        onSelectModule={setActiveModule}
+        unacknowledgedAlertsCount={unacknowledgedCount}
         onAddService={() => setIsAddServiceOpen(true)}
         onAddDependency={() => setIsAddDependencyOpen(true)}
         onResetTopology={handleResetTopologyConfirm}
@@ -248,54 +260,64 @@ export default function App() {
         loading={loading}
       />
 
-      {/* Metrics Summary Top Bar */}
-      <MetricsSummaryBar summary={metricsSummary} />
+      {/* MODULE 1 VIEW: DIGITAL TWIN & DEPENDENCY GRAPH */}
+      {activeModule === 'digital-twin' && (
+        <>
+          {/* Metrics Summary Top Bar */}
+          <MetricsSummaryBar summary={metricsSummary} />
 
-      {/* Toolbar / Search / Filters */}
-      <FilterBar
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        selectedType={filterType}
-        onTypeChange={setFilterType}
-        selectedHealth={filterHealth}
-        onHealthChange={setFilterHealth}
-        currentLayout={currentLayout}
-        onLayoutChange={setCurrentLayout}
-        impactActive={Boolean(impactData)}
-        onClearImpact={handleClearImpact}
-        matchingCount={matchingNodesCount}
-        totalCount={graphData.nodes?.length || 0}
-      />
+          {/* Toolbar / Search / Filters */}
+          <FilterBar
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            selectedType={filterType}
+            onTypeChange={setFilterType}
+            selectedHealth={filterHealth}
+            onHealthChange={setFilterHealth}
+            currentLayout={currentLayout}
+            onLayoutChange={setCurrentLayout}
+            impactActive={Boolean(impactData)}
+            onClearImpact={handleClearImpact}
+            matchingCount={matchingNodesCount}
+            totalCount={graphData.nodes?.length || 0}
+          />
 
-      {/* Main Digital Twin Canvas + Side Drawer */}
-      <main className="main-workspace">
-        <GraphViewer
-          graphData={graphData}
-          selectedNodeId={selectedNode?.id}
-          selectedEdgeId={selectedEdge?.id}
-          onSelectNode={handleSelectNode}
-          onSelectEdge={handleSelectEdge}
-          onClearSelection={handleClearSelection}
-          searchQuery={searchQuery}
-          filterType={filterType}
-          filterHealth={filterHealth}
-          layoutName={currentLayout}
-          impactData={impactData}
-        />
+          {/* Main Digital Twin Canvas + Side Drawer */}
+          <main className="main-workspace">
+            <GraphViewer
+              graphData={graphData}
+              selectedNodeId={selectedNode?.id}
+              selectedEdgeId={selectedEdge?.id}
+              onSelectNode={handleSelectNode}
+              onSelectEdge={handleSelectEdge}
+              onClearSelection={handleClearSelection}
+              searchQuery={searchQuery}
+              filterType={filterType}
+              filterHealth={filterHealth}
+              layoutName={currentLayout}
+              impactData={impactData}
+            />
 
-        {/* Side Panel Inspector */}
-        <ServiceDrawer
-          selectedNode={selectedNode}
-          selectedEdge={selectedEdge}
-          onClose={handleClearSelection}
-          onUpdateService={handleUpdateService}
-          onDeleteService={handleDeleteServiceConfirm}
-          onDeleteDependency={handleDeleteDependencyConfirm}
-          onAnalyzeImpact={handleAnalyzeImpact}
-          impactData={impactData}
-          onClearImpact={handleClearImpact}
-        />
-      </main>
+            {/* Side Panel Inspector */}
+            <ServiceDrawer
+              selectedNode={selectedNode}
+              selectedEdge={selectedEdge}
+              onClose={handleClearSelection}
+              onUpdateService={handleUpdateService}
+              onDeleteService={handleDeleteServiceConfirm}
+              onDeleteDependency={handleDeleteDependencyConfirm}
+              onAnalyzeImpact={handleAnalyzeImpact}
+              impactData={impactData}
+              onClearImpact={handleClearImpact}
+            />
+          </main>
+        </>
+      )}
+
+      {/* MODULE 2 VIEW: AI ANOMALY DETECTION & EARLY WARNING */}
+      {activeModule === 'anomaly-detection' && (
+        <AnomalyDashboard onAddToast={addToast} />
+      )}
 
       {/* Modals */}
       <ServiceModal

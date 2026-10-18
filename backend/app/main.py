@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database.database import engine, Base, SessionLocal
 from app.database.init_db import init_db
+import app.models  # Ensures all models (ServiceModel, DependencyModel, AlertModel) are registered
 from app.api import api_router
 
 logging.basicConfig(
@@ -32,9 +33,9 @@ async def lifespan(app: FastAPI):
     logger.info("CascadeShield AI digital twin engine shutting down.")
 
 app = FastAPI(
-    title="CascadeShield AI - Cloud Digital Twin & Dependency Mapping",
-    description="Module 1: Virtual Cloud Infrastructure, Interactive Dependency Graph, and Simulated Telemetry",
-    version="1.0.0",
+    title="CascadeShield AI - Cloud Resilience Digital Twin & Intelligent Agent",
+    description="Modules 1 & 2: Cloud Digital Twin, Dependency Mapping & AI-Based Anomaly Detection",
+    version="2.0.0",
     lifespan=lifespan
 )
 
@@ -53,7 +54,10 @@ app.include_router(api_router)
 def root():
     return {
         "project": "CascadeShield AI",
-        "module": "Module 1: Cloud Digital Twin and Dependency Mapping",
+        "modules": [
+            "Module 1: Cloud Digital Twin and Dependency Mapping",
+            "Module 2: AI-Based Anomaly Detection and Early Warning"
+        ],
         "status": "operational",
         "api_docs": "/docs",
         "endpoints": {
@@ -61,8 +65,10 @@ def root():
             "services": "/api/services",
             "dependencies": "/api/dependencies",
             "graph": "/api/graph",
-            "impact": "/api/graph/impact/{service_id}",
-            "metrics": "/api/metrics/summary"
+            "anomalies_summary": "/api/anomalies/summary",
+            "anomalies_detect": "/api/anomalies/detect",
+            "anomalies_evaluation": "/api/anomalies/evaluation",
+            "anomalies_thresholds": "/api/anomalies/thresholds"
         }
     }
 

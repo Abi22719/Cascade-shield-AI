@@ -4,6 +4,9 @@ from app.api.services import router as services_router
 from app.api.dependencies import router as dependencies_router
 from app.api.graph import router as graph_router
 from app.api.metrics import router as metrics_router
+from app.api.anomaly_routes import router as anomaly_router
+from app.api.metrics_routes import router as metrics_stream_router
+from app.api.alert_routes import router as alert_router
 
 api_router = APIRouter(prefix="/api")
 api_router.include_router(health_router)
@@ -11,3 +14,8 @@ api_router.include_router(services_router)
 api_router.include_router(dependencies_router)
 api_router.include_router(graph_router)
 api_router.include_router(metrics_router)
+
+# Module 2 routes
+api_router.include_router(anomaly_router)
+api_router.include_router(metrics_stream_router)
+api_router.include_router(alert_router)
