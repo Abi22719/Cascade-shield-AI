@@ -7,7 +7,8 @@ import {
   RefreshCw,
   Activity,
   Network,
-  BellRing
+  BellRing,
+  GitBranch
 } from 'lucide-react';
 
 export default function Navbar({ 
@@ -30,7 +31,7 @@ export default function Navbar({
           <h1>
             CascadeShield AI
             <span className="module-badge">
-              {activeModule === 'digital-twin' ? 'Module 1' : 'Module 2'}
+              {activeModule === 'digital-twin' ? 'Module 1' : (activeModule === 'anomaly-detection' ? 'Module 2' : 'Module 3')}
             </span>
           </h1>
           <p className="brand-subtitle">
@@ -59,6 +60,14 @@ export default function Navbar({
           {unacknowledgedAlertsCount > 0 && (
             <span className="badge-counter">{unacknowledgedAlertsCount}</span>
           )}
+        </button>
+        <button
+          className={`nav-tab-btn ${activeModule === 'cascade-prediction' ? 'active' : ''}`}
+          onClick={() => onSelectModule('cascade-prediction')}
+          title="Module 3: Cascading Failure Prediction Engine"
+        >
+          <GitBranch size={15} />
+          <span>Cascade Engine</span>
         </button>
       </div>
 

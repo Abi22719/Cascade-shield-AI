@@ -19,3 +19,8 @@ api_router.include_router(metrics_router)
 api_router.include_router(anomaly_router)
 api_router.include_router(metrics_stream_router)
 api_router.include_router(alert_router)
+
+# Module 3 routes
+from app.api.cascade_routes import router as cascade_router
+api_router.include_router(cascade_router)
+
