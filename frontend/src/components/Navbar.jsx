@@ -10,7 +10,8 @@ import {
   BellRing,
   GitBranch,
   Search,
-  Bot
+  Bot,
+  FlaskConical
 } from 'lucide-react';
 
 export default function Navbar({ 
@@ -36,7 +37,8 @@ export default function Navbar({
               {activeModule === 'digital-twin' ? 'Module 1' : 
                activeModule === 'anomaly-detection' ? 'Module 2' : 
                activeModule === 'cascade-prediction' ? 'Module 3' : 
-               activeModule === 'root-cause-analysis' ? 'Module 4' : 'Module 5'}
+               activeModule === 'root-cause-analysis' ? 'Module 4' : 
+               activeModule === 'diagnostic-agent' ? 'Module 5' : 'Module 6'}
             </span>
           </h1>
           <p className="brand-subtitle">
@@ -89,6 +91,14 @@ export default function Navbar({
         >
           <Bot size={15} />
           <span>Diagnostic Agent</span>
+        </button>
+        <button
+          className={`nav-tab-btn ${activeModule === 'what-if-simulation' ? 'active' : ''}`}
+          onClick={() => onSelectModule('what-if-simulation')}
+          title="Module 6: What-If Scenario Simulation Engine"
+        >
+          <FlaskConical size={15} />
+          <span>What-If Simulator</span>
         </button>
       </div>
 

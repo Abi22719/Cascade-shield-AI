@@ -4,6 +4,12 @@ from app.models.alert_model import AlertModel
 from app.models.cascade_model import CascadeScenarioModel
 from app.models.rca_model import RCAIncidentModel, RCAEvidenceModel, RCACandidateModel, RCAReportModel
 from app.models.agent_model import AgentSessionModel, AgentActionHistoryModel, AgentSessionResultModel
+from app.models.simulation_model import (
+    SimulationScenarioModel,
+    SimulationRunModel,
+    SimulationEventModel,
+    SimulationServiceStateModel
+)
 
 __all__ = [
     "ServiceModel", 
@@ -16,5 +22,9 @@ __all__ = [
     "RCAReportModel",
     "AgentSessionModel",
     "AgentActionHistoryModel",
-    "AgentSessionResultModel"
+    "AgentSessionResultModel",
+    "SimulationScenarioModel",
+    "SimulationRunModel",
+    "SimulationEventModel",
+    "SimulationServiceStateModel"
 ]

@@ -12,12 +12,13 @@ import AnomalyDashboard from './pages/AnomalyDashboard';
 import CascadePredictionDashboard from './pages/CascadePredictionDashboard';
 import RCADashboard from './pages/RCADashboard';
 import DiagnosticAgentDashboard from './pages/DiagnosticAgentDashboard';
+import SimulationDashboard from './pages/SimulationDashboard';
 import { api } from './services/api';
 import { anomalyApi } from './services/anomalyApi';
 import './styles/App.css';
 
 export default function App() {
-  const [activeModule, setActiveModule] = useState('digital-twin'); // 'digital-twin' | 'anomaly-detection' | 'cascade-prediction' | 'root-cause-analysis' | 'diagnostic-agent'
+  const [activeModule, setActiveModule] = useState('digital-twin'); // 'digital-twin' | 'anomaly-detection' | 'cascade-prediction' | 'root-cause-analysis' | 'diagnostic-agent' | 'what-if-simulation'
   const [unacknowledgedCount, setUnacknowledgedCount] = useState(0);
 
   const [graphData, setGraphData] = useState({ nodes: [], edges: [], summary: {}, cycles: [] });
@@ -335,6 +336,11 @@ export default function App() {
       {/* MODULE 5 VIEW: ADAPTIVE AI DIAGNOSTIC AGENT */}
       {activeModule === 'diagnostic-agent' && (
         <DiagnosticAgentDashboard onAddToast={addToast} />
+      )}
+
+      {/* MODULE 6 VIEW: WHAT-IF SCENARIO SIMULATION ENGINE */}
+      {activeModule === 'what-if-simulation' && (
+        <SimulationDashboard onAddToast={addToast} />
       )}
 
       {/* Modals */}

@@ -32,4 +32,8 @@ api_router.include_router(rca_router)
 from app.api.agent_routes import router as agent_router
 api_router.include_router(agent_router)
 
+# Module 6 routes
+from app.api.simulation_routes import router as simulation_router
+api_router.include_router(simulation_router)
+
 
