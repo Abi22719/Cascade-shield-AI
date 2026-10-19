@@ -54,7 +54,7 @@ export default function ExperimentProgress({ experiment, onCancel }) {
       </div>
 
       {experiment.overall_resilience_score !== null && (
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.5rem', background: 'rgba(255, 255, 255, 0.03)', padding: '0.75rem 1rem', borderRadiu: '6px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.5rem', background: 'rgba(255, 255, 255, 0.03)', padding: '0.75rem 1rem', borderRadius: '6px' }}>
           <span style={{ fontSize: '0.85rem', color: '#94a3b8' }}>Overall Resilience Score:</span>
           <span style={{ fontSize: '1.2rem', fontWeight: 700, color: '#4ade80' }}>
             {experiment.overall_resilience_score.toFixed(1)} / 100.0
