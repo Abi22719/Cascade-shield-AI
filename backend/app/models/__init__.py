@@ -17,6 +17,13 @@ from app.models.recovery_models import (
     RecoveryEventModel,
     RecoveryEvaluationModel
 )
+from app.models.validation_models import (
+    ValidationRunModel,
+    ValidationCheckModel,
+    ValidationEvidenceModel,
+    ValidationRecommendationModel,
+    ValidationConfigModel
+)
 
 __all__ = [
     "ServiceModel", 
@@ -38,5 +45,11 @@ __all__ = [
     "RecoveryActionModel",
     "RecoverySimulationRunModel",
     "RecoveryEventModel",
-    "RecoveryEvaluationModel"
+    "RecoveryEvaluationModel",
+    "ValidationRunModel",
+    "ValidationCheckModel",
+    "ValidationEvidenceModel",
+    "ValidationRecommendationModel",
+    "ValidationConfigModel"
 ]
+

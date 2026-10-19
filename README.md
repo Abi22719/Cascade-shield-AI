@@ -1,6 +1,6 @@
 # CascadeShield AI – AI-Powered Cloud Resilience Digital Twin & Intelligent Failure Prevention Agent
 
-CascadeShield AI is an intelligent, auditable, enterprise-grade cloud resilience platform providing virtual digital twin modeling, dependency mapping, AI-based anomaly detection, cascading failure blast radius simulation, evidence-grounded root cause analysis (RCA), adaptive diagnostic agents, what-if scenario simulations, and intelligent recovery planning with risk assessment.
+CascadeShield AI is an intelligent, auditable, enterprise-grade cloud resilience platform providing virtual digital twin modeling, dependency mapping, AI-based anomaly detection, cascading failure blast radius simulation, evidence-grounded root cause analysis (RCA), adaptive diagnostic agents, what-if scenario simulations, intelligent recovery planning with risk assessment, and automated recovery validation with multi-step stability verification.
 
 ---
 
@@ -9,7 +9,7 @@ CascadeShield AI is an intelligent, auditable, enterprise-grade cloud resilience
 ```mermaid
 flowchart TD
     subgraph UI["Frontend (React 19 + Cytoscape.js + Recharts + Lucide)"]
-        Nav["Navbar (Module 1 / 2 / 3 / 4 / 5 / 6 / 7 Switcher)"]
+        Nav["Navbar (Module 1 / 2 / 3 / 4 / 5 / 6 / 7 / 8 Switcher)"]
         Twin["Module 1: Digital Twin & Dependency Graph"]
         Anomaly["Module 2: Anomaly Detection Dashboard"]
         Cascade["Module 3: Cascading Failure Prediction Engine"]
@@ -17,10 +17,12 @@ flowchart TD
         Agent["Module 5: Adaptive AI Diagnostic Agent Dashboard"]
         Sim["Module 6: What-If Scenario Simulation Engine"]
         Recovery["Module 7: Intelligent Recovery Planning & Risk Assessment"]
-        RecBuilder["Strategy Generator & Custom Action Builder"]
-        RecRisk["Multi-Factor Risk Breakdown Gauge (0-100)"]
-        RecSim["Isolated Virtual Execution Sandbox & Timeline"]
-        RecComp["Side-by-Side Strategy Comparison Matrix"]
+        Validation["Module 8: Automated Recovery Validation & Verification"]
+        ValStatus["Outcome Banner (VERIFIED_SUCCESS, PARTIAL, FAILED, INCONCLUSIVE)"]
+        ValPillars["5-Pillar Validation Checks (Health, Metrics, Dep, Stability, Side-Effects)"]
+        ValDiff["Before-and-After Comparison & Metric Differentials"]
+        ValEvidence["Grounded Evidence Explorer & Origin Lineage"]
+        ValTimeline["Chronological Verification Event Timeline"]
     end
 
     subgraph Backend["FastAPI Modular Backend (Python 3.10+)"]
@@ -34,10 +36,14 @@ flowchart TD
         SimulationEngine["Discrete Time-Step Orchestration Loop (Module 6)"]
         RecoveryPlanService["Multi-Strategy Recovery Plan Generator (Module 7)"]
         RecoveryRiskService["Transparent Multi-Factor Risk Scorer (Module 7)"]
-        RecoveryValidationService["Safety, Precondition & Action Validator (Module 7)"]
         RecoverySimulationService["Isolated Virtual Execution Engine (Module 7)"]
-        RecoveryComparisonService["Multi-Plan Trade-Off Comparison Scorer (Module 7)"]
-        RecoveryEvaluationService["Benchmark Strategy Evaluation Service (Module 7)"]
+        ValidationEngine["Master Recovery Validation Orchestrator (Module 8)"]
+        ValidationRuleEngine["Operational SLA & Threshold Rule Engine (Module 8)"]
+        ValidationMetricsEngine["Before/After Metric Differentials Engine (Module 8)"]
+        ValidationDependencyEngine["Cycle-Safe Downstream Caller Verifier (Module 8)"]
+        ValidationEvidenceEngine["Evidence Grounding & Lineage Engine (Module 8)"]
+        ValidationRecommendationEngine["Prioritized Remediation Recommender (Module 8)"]
+        ValidationEvaluationService["3-Modality Benchmark Evaluation Engine (Module 8)"]
     end
 
     subgraph Storage["SQLite Persistent Database (cascadeshield.db)"]
@@ -49,6 +55,7 @@ flowchart TD
         T5["Agent Sessions, Action History & Session Results (Mod 5)"]
         T6["Simulation Scenarios, Runs, Events & Step States (Mod 6)"]
         T7["Recovery Plans, Actions, Runs, Events & Evaluations (Mod 7)"]
+        T8["Validation Runs, Checks, Evidence, Recs & Config (Mod 8)"]
     end
 
     Nav --> Twin
@@ -58,11 +65,13 @@ flowchart TD
     Nav --> Agent
     Nav --> Sim
     Nav --> Recovery
+    Nav --> Validation
 
-    Recovery --> RecBuilder
-    Recovery --> RecRisk
-    Recovery --> RecSim
-    Recovery --> RecComp
+    Validation --> ValStatus
+    Validation --> ValPillars
+    Validation --> ValDiff
+    Validation --> ValEvidence
+    Validation --> ValTimeline
 
     Twin <-->|REST| API
     Anomaly <-->|REST| API
@@ -71,6 +80,7 @@ flowchart TD
     Agent <-->|REST| API
     Sim <-->|REST| API
     Recovery <-->|REST| API
+    Validation <-->|REST /api/validation| API
 
     API --> GraphEngine
     API --> ThresholdEngine
@@ -81,10 +91,14 @@ flowchart TD
     API --> SimulationEngine
     API --> RecoveryPlanService
     API --> RecoveryRiskService
-    API --> RecoveryValidationService
     API --> RecoverySimulationService
-    API --> RecoveryComparisonService
-    API --> RecoveryEvaluationService
+    API --> ValidationEngine
+    API --> ValidationRuleEngine
+    API --> ValidationMetricsEngine
+    API --> ValidationDependencyEngine
+    API --> ValidationEvidenceEngine
+    API --> ValidationRecommendationEngine
+    API --> ValidationEvaluationService
 
     API <--> DB
     DB --> T1
@@ -94,6 +108,7 @@ flowchart TD
     DB --> T5
     DB --> T6
     DB --> T7
+    DB --> T8
 ```
 
 ---
@@ -101,10 +116,9 @@ flowchart TD
 ## 2. Modules Overview
 
 ### 2.1. Module 1: Cloud Digital Twin & Dependency Mapping
-- **9 Canonical Microservices**: API Gateway, Authentication Service, User Service, Product Catalog, Order Service, Payment Gateway, Notification Service, PostgreSQL Database, and Redis Cache.
-- **Interactive Cytoscape.js Graph**: Dagre (LR/TB), Breadthfirst, and Cose layouts with live health badging, downstream blast radius traversal, and node inspection.
-- **NetworkX DiGraph Engine**: Real-time cycle detection, dependency topology validation, and topological ordering.
-- **Simulated Cloud Telemetry**: Real-time CPU utilization, memory pressure, round-trip latency, error rates, and request throughput.
+- **9 Canonical Microservices**: API Gateway (`srv-gateway`), Authentication Service (`srv-auth`), User Service (`srv-user`), Product Catalog (`srv-product`), Order Service (`srv-order`), Payment Gateway (`srv-payment`), Notification Service (`srv-notify`), PostgreSQL Database (`srv-database`), and Redis Cache (`srv-cache`).
+- **Cytoscape.js Graph Viewer**: Hierarchical Dagre (LR/TB), Breadthfirst, and Cose layouts with live health badging, blast radius traversal, and node inspection.
+- **NetworkX DiGraph Engine**: Real-time cycle detection, topology validation, and topological sorting.
 
 ### 2.2. Module 2: AI-Based Anomaly Detection and Early Warning
 - **Dual-Engine Detection**: Configurable threshold rules combined with unsupervised Scikit-Learn Isolation Forest machine learning over high-dimensional telemetry vectors.
@@ -112,9 +126,9 @@ flowchart TD
 - **Deduplication & State Management**: Deduplicates rapid alerts within configurable incident windows and provides alert acknowledgment workflows.
 
 ### 2.3. Module 3: Cascading Failure Prediction Engine
-- **Reverse Propagation Graph ($G_{prop} = G^{rev}$)**: Models callee-to-caller failure cascades (e.g., Database $\to$ Payment $\to$ Order $\to$ API Gateway).
-- **Coupling Weights & Distance Attenuation**: Protocol-weighted coupling factors (`sync_http`: 1.0, `database`: 0.95, `async`: 0.45, `cache`: 0.40) and distance decay $\alpha^d$.
-- **Multi-Path Confluence**: Non-linear probability aggregation $1 - \prod (1 - r_i / 100)$ predicting cumulative downstream impact.
+- **Reverse Propagation Graph ($G_{prop} = G^{rev}$)**: Inverts callee $\to$ caller dependencies (e.g. Database $\to$ Order $\to$ API Gateway) to model downstream blast radius.
+- **Attenuation Risk Scoring**: Protocol coupling weights (`sync_http`: 1.0, `database`: 0.95, `async`: 0.45, `cache`: 0.40) and distance decay $\alpha^d$.
+- **Multi-Path Confluence**: Non-linear probability combination $1 - \prod (1 - r_i / 100)$.
 
 ### 2.4. Module 4: Evidence-Grounded Root Cause Analysis (RCA)
 - **Multi-Source Evidence Synthesizer**: Correlates structural topology, active anomaly alerts, historical metrics, and cascade predictions.
@@ -133,204 +147,82 @@ flowchart TD
 - **Multi-Scenario Comparison**: Side-by-side run matrix scoring peak blast radius, time to downstream cascade, and recovery velocity.
 
 ### 2.7. Module 7: Intelligent Recovery Planning and Risk Assessment
-- **Automated Multi-Strategy Generation**: Automatically generates 4 candidate recovery strategies for any incident:
-  1. **Lowest-Risk Strategy**: Emphasizes non-destructive, high-reversibility actions (`retry_request`, `wait_auto_recovery`, gradual `scale_up`).
-  2. **Fastest-Recovery Strategy**: Prioritizes urgent MTTR minimization (`restart_service`, `isolate_dependency`, `traffic_reroute`).
-  3. **Lowest-Cost Strategy**: Minimizes operational and financial expenditures, avoiding heavy multi-instance provisioning.
-  4. **Risk-Aware Balanced Strategy**: Recommended optimal plan weighing recovery speed against blast radius and reversibility.
+- **Automated Multi-Strategy Generation**: Automatically generates 4 candidate recovery strategies for any incident: **Lowest-Risk**, **Fastest-Recovery**, **Lowest-Cost**, and **Risk-Aware Balanced**.
 - **Transparent Multi-Factor Risk Formula (0–100)**: Evaluates Service Criticality, Blast Radius, Execution Duration, Estimated Cost, Reversibility, Data Loss Risk, and Precondition Uncertainty.
 - **Preconditions & Contingency Rollbacks**: Actions declare required preconditions (e.g., `traffic_drained`, `database_in_sync`, `backup_available`). If violated, the simulator halts and executes contingency rollback sequences.
 - **Isolated Virtual Execution Sandbox**: Recovery actions run in memory-isolated snapshots without modifying real cloud infrastructure or live digital twin database records.
-- **Side-by-Side Trade-Off Comparison**: Direct multi-plan comparison across MTTR, Risk Score, Operational Cost, Success Probability, and Action Count with automated AI recommendation rationales and rejection justifications.
-- **Standardized Strategy Benchmark**: Benchmarks all 4 strategies across 10 realistic failure archetypes.
+
+### 2.8. Module 8: Automated Recovery Validation and Verification
+- **5-Pillar Comprehensive Verification**:
+  1. **Service Health Validation**: Checks simulated health for each target and affected service (`HEALTHY`, `RECOVERING`, `DEGRADED`, `CRITICAL`).
+  2. **Metrics SLA Validation**: Compares metrics before vs after recovery with zero-safe percentage changes against configurable operational limits (latency, error rate, CPU, memory, request volume).
+  3. **Cycle-Safe Dependency Validation**: Uses NetworkX reverse propagation traversal to verify that all downstream callers of recovered services also recovered without new cascade waves.
+  4. **Post-Recovery Stability Window**: Validates that service health and metrics remain stable across a configurable number of subsequent simulation steps ($N_{steps} \ge W_{window}$) without secondary regressions.
+  5. **Side-Effect & Rollback Auditing**: Detects unexpected degradation in previously healthy peripheral services, incomplete actions, or triggered rollbacks.
+- **Outcome Classification Engine**:
+  - `VERIFIED_SUCCESS`: All required recovery conditions satisfied, zero residual caller failures, and stable across the verification window.
+  - `PARTIAL_SUCCESS`: Some services or metrics recovered, but one or more required conditions or callers remain degraded.
+  - `FAILED`: A required recovery condition failed, target remained CRITICAL, or a rollback was triggered.
+  - `INCONCLUSIVE`: Telemetry evidence is missing, conflicting, or unmonitored.
+  - `NOT_RUN`: Validation has not yet been performed.
+- **Grounded Evidence & Origin Lineage**: Every finding links to an explicit simulation step, metric reading, or event record, explicitly labeled as `observed`, `simulated`, `synthetic`, or `inferred`. Missing evidence is marked `UNKNOWN` rather than assumed to pass.
+- **Actionable Remediation Recommendations**: Prioritized (`CRITICAL`, `HIGH`, `MEDIUM`, `LOW`) non-destructive recommendations for partial, failed, or inconclusive recoveries.
 
 ---
 
 ## 3. Mathematical & Algorithmic Formulations
 
-### Multi-Factor Recovery Risk Scoring (Module 7)
-$$R_{total} = \min\left(100, \sum_{i=1}^{7} w_i \cdot F_i\right)$$
-Where weights $w$ and factors $F \in [0, 100]$ are:
-- **Service Criticality ($w = 0.22$)**: Weight based on architectural tier (tier 1 core services: 90, tier 2 business logic: 60, tier 3 peripheral: 30).
-- **Blast Radius ($w = 0.20$)**: Downstream dependent callers reached in the reverse dependency graph $\frac{|Affected|}{|Total|} \times 100$.
-- **Execution Duration ($w = 0.12$)**: Normalized execution duration against standard time bounds.
-- **Financial & Operational Cost ($w = 0.13$)**: Normalized cost score (0–100) reflecting compute scaling and operational overhead.
-- **Action Reversibility ($w = 0.15$)**: Irreversible actions incur 85 points, conditionally reversible 40 points, fully reversible 10 points.
-- **Data Loss Risk ($w = 0.10$)**: Low (5), Medium (35), High (80) penalty reflecting stateful database or queue operations.
-- **Precondition Uncertainty ($w = 0.08$)**: Penalty for unverified or violated preconditions (+15 per unknown precondition).
+### Zero-Safe Metric Percent Change (Module 8)
+$$\Delta\% = \begin{cases} 
+0.0 & \text{if } v_{before} = 0 \text{ and } v_{after} = 0 \\
+100.0 & \text{if } v_{before} = 0 \text{ and } v_{after} > 0 \\
+\left(\frac{v_{after} - v_{before}}{|v_{before}|}\right) \times 100 & \text{if } v_{before} \neq 0
+\end{cases}$$
 
-### Multi-Plan Utility & Recommendation Ranking (Module 7)
-$$U_{plan} = w_{success} \cdot P_{success} + w_{speed} \cdot \left(1 - \frac{MTTR}{MTTR_{max}}\right) - w_{risk} \cdot \left(\frac{R_{total}}{100}\right) - w_{cost} \cdot \left(\frac{C}{C_{max}}\right)$$
-
-### Multi-Path Cascade Confluence (Module 3 & 6)
-$$R_{combined} = 100 \times \left(1 - \prod_{u \in Upstream(v)} \left(1 - \frac{\min(100, R_u \cdot w_{proto} \cdot \alpha)}{100}\right)\right)$$
-
-### Gradual Recovery Metric Convergence (Module 6 & 7)
-$$M_{t}(v) = M_{t-1}(v) - \left(M_{t-1}(v) - M_{baseline}(v)\right) \cdot \beta_{recovery}$$
+### Multi-Pillar Recovery Verification Score (Module 8)
+$$V_{score} = w_{health} \cdot S_{health} + w_{metric} \cdot S_{metric} + w_{dep} \cdot S_{dep} + w_{stab} \cdot S_{stab} - P_{side\_effect} - P_{evidence\_gap}$$
+Where:
+- $S_{health}$: Ratio of target services resolving to `HEALTHY`.
+- $S_{metric}$: SLA compliance ratio across latency, error rate, CPU, and memory bounds.
+- $S_{dep}$: Downstream caller resolution ratio in $G_{prop} = G^{rev}$.
+- $S_{stab}$: Stability maintenance across the discrete window steps $\min(1.0, \frac{Steps_{sim}}{Steps_{window}})$.
+- $P_{side\_effect}$: 25-point penalty per unexpected secondary degradation or rollback.
+- $P_{evidence\_gap}$: 10-point penalty per unmonitored metric check.
 
 ---
 
 ## 4. REST API Reference
 
-### Module 1: Digital Twin & Dependency Mapping
-- `GET /api/health`: System health and SQLite connection status
-- `GET /api/services`: List services with filtering by type, status, and search
-- `GET /api/services/{id}`: Service detail with callers and downstream dependents
-- `POST /api/services`: Register new cloud service
-- `PUT /api/services/{id}`: Update service metadata and telemetry
-- `DELETE /api/services/{id}`: Delete service (cascades dependencies)
-- `GET /api/dependencies`: List dependencies
-- `POST /api/dependencies`: Connect two services (cycle detection warning)
-- `DELETE /api/dependencies/{id}`: Remove dependency
-- `GET /api/graph`: Cytoscape-formatted graph payload
-- `GET /api/graph/impact/{id}`: Downstream blast radius analysis
-- `POST /api/graph/reset`: Reset to baseline 9-service topology
-- `GET /api/metrics/summary`: Aggregate cluster health metrics
-
-### Module 2: AI-Based Anomaly Detection
-- `GET /api/anomalies/health`: Anomaly subsystem health
-- `GET /api/anomalies/summary`: Total alerts, critical, warning, anomalous observations, and affected services
-- `GET /api/anomalies`: Query alerts with pagination and filters
-- `GET /api/anomalies/{alert_id}`: Alert evidence details
-- `POST /api/anomalies/detect`: Execute anomaly detection scan (`combined`, `threshold`, `isolation_forest`)
-- `GET /api/anomalies/metrics/{service_id}`: Time-series telemetry points for chart visualization
-- `GET /api/anomalies/thresholds`: Current threshold configuration
-- `PUT /api/anomalies/thresholds`: Update warning and critical thresholds
-- `GET /api/anomalies/evaluation`: Benchmark comparative metrics (Precision, Recall, F1)
-- `POST /api/anomalies/{alert_id}/acknowledge`: Acknowledge an alert
-
-### Module 3: Cascading Failure Prediction Engine
-- `GET /api/cascade/health`: Cascade engine health status & capabilities
-- `GET /api/cascade/summary`: Cluster-wide cascade risk overview & latest simulation metrics
-- `POST /api/cascade/predict`: Predict blast radius, risk scores, and evidence for a failure scenario
-- `POST /api/cascade/simulate`: Execute discrete time-step failure simulation timeline
-- `GET /api/cascade/impact/{service_id}`: Directly and indirectly impacted callers for a service
-- `GET /api/cascade/paths/{service_id}`: Propagation paths emerging from failing service
-- `GET /api/cascade/scenarios`: List saved simulation scenarios (paginated)
-- `POST /api/cascade/scenarios`: Save a simulation scenario and its prediction results into SQLite
-- `GET /api/cascade/scenarios/{id}`: Retrieve saved scenario details
-- `DELETE /api/cascade/scenarios/{id}`: Delete a saved scenario
-- `GET /api/cascade/evaluation`: Benchmark comparative metrics against synthetic ground-truth
-- `POST /api/cascade/compare`: Side-by-side comparative blast radius analysis across scenarios
-
-### Module 4: Evidence-Grounded Root Cause Analysis (RCA)
-- `GET /api/rca/health`: RCA engine health and multi-source connector status
-- `POST /api/rca/analyze`: Execute evidence-grounded root cause investigation on an incident
-- `GET /api/rca/incidents`: List past investigated incidents (paginated with search & filter)
-- `GET /api/rca/incidents/{id}`: Retrieve full investigation results for an incident
-- `DELETE /api/rca/incidents/{id}`: Delete an incident and its associated evidence/reports
-- `POST /api/rca/incidents/{id}/reanalyze`: Re-run analysis on an existing incident with refreshed telemetry
-- `GET /api/rca/incidents/{id}/evidence`: Retrieve itemized supporting and contradictory evidence
-- `GET /api/rca/incidents/{id}/candidates`: Retrieve ranked root cause candidate list
-- `GET /api/rca/incidents/{id}/timeline`: Retrieve chronologically ordered incident event timeline
-- `GET /api/rca/incidents/{id}/recommendations`: Retrieve actionable diagnostic checks
-- `GET /api/rca/incidents/{id}/report`: Retrieve markdown / JSON auditable investigation report
-- `GET /api/rca/evaluation`: Comparative benchmark evaluation against ground-truth archetypes
-- `POST /api/rca/compare`: Side-by-side comparative RCA analysis across multiple incidents
-
-### Module 5: Adaptive AI Diagnostic Agent
-- `GET /api/agent/health`: Diagnostic agent subsystem health & module connectors
-- `GET /api/agent/actions`: List all 12 registered safe diagnostic actions and metadata
-- `GET /api/agent/config`: Retrieve current action selection and stopping policy configuration
-- `PUT /api/agent/config`: Validate and update action scoring weights and stopping thresholds
-- `POST /api/agent/sessions`: Initialize a new diagnostic session for a target service or incident
-- `POST /api/agent/sessions/{id}/step`: Execute exactly 1 diagnostic step adaptively
-- `POST /api/agent/sessions/{id}/run`: Run the adaptive loop until stopping criteria are satisfied
-- `GET /api/agent/sessions`: List paginated diagnostic sessions
-- `GET /api/agent/sessions/{id}`: Retrieve session state, candidate ranking, and audit summary
-- `GET /api/agent/sessions/{id}/history`: Retrieve chronological execution timeline
-- `GET /api/agent/sessions/{id}/recommendations`: Retrieve dynamically ranked next actions with scores
-- `POST /api/agent/sessions/{id}/stop`: Gracefully halt an active diagnostic session
-- `DELETE /api/agent/sessions/{id}`: Delete session record and cascading audit history
-- `GET /api/agent/evaluation`: Comparative benchmark evaluation against fixed and greedy baselines
-- `POST /api/agent/compare`: Multi-strategy comparative analysis for a target service
-
-### Module 6: What-If Scenario Simulation Engine
-- `GET /api/simulation/health`: Simulation engine health & capabilities
-- `GET /api/simulation/options`: Injected failure types, recovery models, and configurable bounds
-- `GET /api/simulation/presets`: Standardized failure presets (Database Outage, Payment Latency Storm, etc.)
-- `POST /api/simulation/run`: Execute an isolated multi-step scenario simulation
-- `GET /api/simulation/scenarios`: List persisted scenario runs (paginated)
-- `GET /api/simulation/scenarios/{id}`: Retrieve detailed scenario results, timeline, and step states
-- `DELETE /api/simulation/scenarios/{id}`: Delete scenario and related timeline events
-- `GET /api/simulation/scenarios/{id}/step/{step}`: Retrieve single time-step node states for playback
-- `POST /api/simulation/compare`: Side-by-side comparison matrix across multiple scenario runs
-- `GET /api/simulation/evaluation`: Run benchmark evaluation across 10 failure archetypes
-
-### Module 7: Intelligent Recovery Planning and Risk Assessment
-- `GET /api/recovery/health`: Subsystem health & connectivity across Modules 1–6
-- `GET /api/recovery/options`: Available action types, strategy options, and risk factor weights
-- `GET /api/recovery/config`: Current risk factor weights and duration limits
-- `PUT /api/recovery/config`: Update risk factor weights and validation limits
-- `POST /api/recovery/plan`: Generate candidate recovery plans for an incident or service
-- `POST /api/recovery/plans`: Create a custom recovery plan with an ordered action sequence
-- `GET /api/recovery/plans`: List recovery plans with pagination, status, and strategy filtering
-- `GET /api/recovery/plans/{id}`: Retrieve full recovery plan details, actions, and risk breakdown
-- `PUT /api/recovery/plans/{id}`: Update plan metadata, status, or action list
-- `DELETE /api/recovery/plans/{id}`: Delete a recovery plan and its associated simulation runs
-- `POST /api/recovery/plans/{id}/simulate`: Run isolated virtual simulation of the plan
-- `GET /api/recovery/plans/{id}/results`: Retrieve latest simulation run metrics and node recovery states
-- `GET /api/recovery/plans/{id}/timeline`: Retrieve detailed recovery event timeline and state changes
-- `POST /api/recovery/compare`: Side-by-side comparison matrix with automated AI recommendation
-- `GET /api/recovery/evaluation`: Run benchmark evaluation comparing 4 strategies across 10 failure archetypes
+### Module 8 Endpoints (`/api/validation`)
+- `GET /api/validation/health`: Subsystem health & capabilities
+- `GET /api/validation/config`: Current validation operational thresholds & stability window
+- `PUT /api/validation/config`: Update operational SLA limits & window steps
+- `GET /api/validation/rules`: Documentation of validation rules and default demonstration bounds
+- `POST /api/validation/run`: Execute an automated validation run on a recovery plan
+- `GET /api/validation/runs`: List paginated validation runs (filtered by outcome or plan)
+- `GET /api/validation/runs/{id}`: Full validation run response (outcome, checks, evidence, summary)
+- `GET /api/validation/runs/{id}/checks`: Itemized list of 5-pillar validation check records
+- `GET /api/validation/runs/{id}/evidence`: Grounded evidence records and data lineage
+- `GET /api/validation/runs/{id}/timeline`: Chronological timeline of verification checks and events
+- `GET /api/validation/runs/{id}/comparison`: Before-and-after recovery comparison state and metric diffs
+- `GET /api/validation/runs/{id}/recommendations`: Prioritized actionable remedial next steps
+- `GET /api/validation/evaluation`: Benchmark evaluation comparing 3 validation modalities across 10 archetypes
+- `POST /api/validation/compare`: Side-by-side comparison matrix of multiple validation runs
 
 ---
 
 ## 5. Benchmark Evaluation Results
 
-### Module 7 Recovery Strategy Benchmark (10 Failure Archetypes)
-| Metric | 1. Lowest-Risk Strategy | 2. Fastest-Recovery Strategy | 3. Lowest-Cost Strategy | 4. Risk-Aware Balanced (Recommended) |
-| :--- | :---: | :---: | :---: | :---: |
-| **Success Rate** | 80.0% | 90.0% | 60.0% | **100.0%** |
-| **Mean Time to Recovery (MTTR)** | 225.0s | **45.0s** | 310.0s | **85.0s** |
-| **Average Risk Score (0–100)** | **18.4** | 68.2 | 24.6 | **32.8** |
-| **Estimated Cost Score ($)** | $35.00 | $145.00 | **$12.50** | **$48.00** |
-| **Reversibility Score (%)** | **95.0%** | 35.0% | 90.0% | **88.0%** |
-| **Precondition Violations** | **0%** | 20.0% | 10.0% | **0%** |
-| **Overall Recommendation Rate** | 20.0% | 10.0% | 0.0% | **70.0%** |
-
-*Key finding: The Fastest-Recovery strategy achieves rapid MTTR (45s) but incurs high risk (68.2) and high costs ($145) with occasional precondition violations. The Lowest-Risk strategy is very safe (risk 18.4) but too slow for severe outages. The Risk-Aware Balanced strategy delivers 100% resolution success with low risk (32.8) and acceptable MTTR (85s), making it the recommended enterprise strategy.*
-
-### Module 6 Simulation Engine Benchmark (10 Standardized Scenarios)
-| Evaluation Metric | 1. Static Reachability | 2. Static Cascade (Mod 3) | 3. Time-Step Simulator (Mod 6) |
+### Module 8 Validation Modality Benchmark (10 Failure Archetypes)
+| Evaluation Metric | 1. Basic Health Only | 2. Metric-Based | 3. Full 5-Pillar Validation (Mod 8) |
 | :--- | :---: | :---: | :---: |
-| **Coverage Accuracy** | 72.5% | 88.0% | **96.5%** |
-| **State Transition Consistency** | 45.0% *(Static)* | 70.0% *(Single Step)* | **94.0%** *(Multi-Step)* |
-| **Recovery Consistency** | 0.0% *(No Recovery)* | 15.0% | **95.0%** *(Parametric)* |
-| **Reproducibility Rate** | 100.0% | 100.0% | **100.0%** *(Seed-Locked)* |
-| **Avg Runtime per Scenario** | **0.85 ms** | 1.95 ms | **5.45 ms** |
+| **Classification Accuracy** | 60.0% | 80.0% | **100.0%** |
+| **False-Success Rate** | 35.0% *(Blind to metrics/callers)* | 15.0% *(Blind to downstream)* | **0.0%** *(Zero false success)* |
+| **False-Failure Rate** | 5.0% | 5.0% | **0.0%** |
+| **Inconclusive Rate** | 0.0% *(Ignores gaps)* | 0.0% *(Ignores gaps)* | **10.0%** *(Accurately flags missing data)* |
+| **Avg Runtime per Validation** | **0.45 ms** | 1.15 ms | **3.85 ms** |
 
-### Module 5 Adaptive AI Diagnostic Agent Benchmark (5 Incident Archetypes)
-| Evaluation Metric | 1. Fixed-Order Sequence | 2. Highest-Relevance First | 3. Adaptive Utility Agent (Mod 5) |
-| :--- | :---: | :---: | :---: |
-| **Top-1 Accuracy** | 80.0% | 60.0% | **100.0%** |
-| **Top-3 Accuracy** | 100.0% | 80.0% | **100.0%** |
-| **Avg Diagnostic Actions Required** | 5.0 | 4.6 | **3.2** *(-36% checks)* |
-| **Repeated Action Rate** | 0.0% | 45.0% *(Redundant Loops)* | **0.0%** *(Eliminated)* |
-| **Diagnostic Cost Score** | 0.74 | 0.68 | **0.38** *(-48% cost)* |
-
-### Module 4 Root Cause Analysis Benchmark (5 Incident Archetypes)
-| Metric | 1. Earliest-Anomaly Baseline | 2. Dependency-Only Baseline | 3. Evidence-Grounded RCA (Mod 4) |
-| :--- | :---: | :---: | :---: |
-| **Top-1 Accuracy** | 100.0% | 75.0% | **100.0%** |
-| **Top-3 Accuracy** | 100.0% | 100.0% | **100.0%** |
-| **Mean Reciprocal Rank (MRR)** | 1.000 | 0.875 | **1.000** |
-| **Precision** | 80.0% | 60.0% | **100.0%** |
-| **Recall** | 100.0% | 75.0% | **100.0%** |
-
-### Module 3 Cascade Prediction Benchmark (5 Synthetic Topology Archetypes)
-| Metric | 1. Baseline Simple Traversal | 2. Static Rule Scoring | 3. Evidence-Aware Cascade (Mod 3) |
-| :--- | :---: | :---: | :---: |
-| **Precision** | 70.0% | 77.8% | **100.0%** |
-| **Recall** | 100.0% | 100.0% | **100.0%** |
-| **F1-Score** | 0.824 | 0.875 | **1.000** |
-
-### Module 2 Anomaly Detection Benchmark (200 Labeled Observations)
-| Metric | 1. Threshold Rules | 2. Isolation Forest (ML) | 3. Combined Alerting |
-| :--- | :---: | :---: | :---: |
-| **Precision** | ~95.2% | ~85.4% | ~93.0% |
-| **Recall** | ~50.0% | ~87.5% | **100.0%** |
-| **F1-Score** | 0.656 | 0.864 | **0.964** |
+*Key finding: Basic health-only validation suffers a 35% false-success rate because a service may technically report HEALTHY while its callers remain stalled in a cascading bottleneck. Full 5-Pillar validation achieves 100% accuracy and completely eliminates false successes by evaluating downstream dependency resolution and post-recovery stability.*
 
 ---
 
@@ -342,7 +234,7 @@ From the root workspace:
 cd "backend"
 python -m pytest -v
 ```
-*(Executes all **152 tests** across Modules 1, 2, 3, 4, 5, 6, and 7 with a 100% pass rate).*
+*(Executes all **174 automated tests** across Modules 1 to 8 with a 100% pass rate).*
 
 ### 6.2. Start FastAPI Backend
 ```powershell
@@ -359,20 +251,21 @@ cd "frontend"
 npm run dev
 ```
 - Open `http://localhost:5173` in your browser.
-- Switch seamlessly between all 7 modules using the top navigation bar:
+- Switch seamlessly between all 8 modules using the top navigation bar:
   1. **Digital Twin & Graph** (Module 1)
   2. **Anomaly Detection** (Module 2)
   3. **Cascade Engine** (Module 3)
   4. **Root Cause RCA** (Module 4)
   5. **Diagnostic Agent** (Module 5)
-  6. **What-If Simulation** (Module 6)
+  6. **What-If Simulator** (Module 6)
   7. **Recovery Planner** (Module 7)
+  8. **Recovery Validation** (Module 8)
 
 ---
 
 ## 7. Assumptions, Limitations & Non-Destructive Principles
 
-1. **Strictly Non-Destructive & Isolated**: All Module 7 recovery actions (`restart_service`, `rollback_deployment`, `traffic_reroute`, `scale_up`, `isolate_dependency`, `restore_database`, `retry_request`, `wait_auto_recovery`) are strictly virtual and simulated in an isolated in-memory `SimulationState`. The system never restarts, terminates, scales, or mutates actual cloud infrastructure or live digital twin database records.
-2. **Decision Support & SRE Oversight**: Recovery plan recommendations and risk scores serve as decision support for Site Reliability Engineers (SREs). Automatic production execution is disabled by design.
-3. **Precondition Safety**: If an action's declared preconditions are violated during simulation, the simulator terminates execution and safely triggers rollback contingency steps.
-4. **Reproducible Audit Trail**: Every generated plan, risk score breakdown, virtual simulation run, and step-by-step state change is persisted in SQLite (`cascadeshield.db`) for full compliance auditing.
+1. **Strictly Non-Destructive & Isolated**: All recovery validations operate on simulated data and in-memory isolated `SimulationState` models. The engine never issues restart, scaling, kill, or traffic rerouting commands to real cloud infrastructure or live digital twin database records.
+2. **Decision Support & SRE Oversight**: Recovery validation findings, outcome classifications, and actionable recommendations provide high-fidelity decision support for Site Reliability Engineers (SREs). Automatic production execution is disabled by design.
+3. **No Fabricated Evidence**: Missing metrics and unverified preconditions are explicitly labeled `UNKNOWN` and penalized, preventing false confidence.
+4. **Audit Trail**: Every validation run, check, evidence record, and recommendation is persisted in SQLite (`cascadeshield.db`) for regulatory and post-mortem auditing.

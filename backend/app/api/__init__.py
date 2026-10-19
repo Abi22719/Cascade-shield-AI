@@ -40,4 +40,8 @@ api_router.include_router(simulation_router)
 from app.api.recovery_routes import router as recovery_router
 api_router.include_router(recovery_router)
 
+# Module 8 routes
+from app.api.validation_routes import router as validation_router
+api_router.include_router(validation_router)
+
 

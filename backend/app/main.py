@@ -34,8 +34,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="CascadeShield AI - Cloud Resilience Digital Twin & Intelligent Agent",
-    description="Modules 1-7: Digital Twin, Anomaly Detection, Cascade Prediction, Root Cause Analysis, Adaptive AI Diagnostic Agent, What-If Simulation Engine & Intelligent Recovery Planning",
-    version="7.0.0",
+    description="Modules 1-8: Digital Twin, Anomaly Detection, Cascade Prediction, Root Cause Analysis, Adaptive AI Diagnostic Agent, What-If Simulation Engine, Intelligent Recovery Planning & Automated Recovery Validation and Verification",
+    version="8.0.0",
     lifespan=lifespan
 )
 
@@ -61,7 +61,8 @@ def root():
             "Module 4: Evidence-Grounded Root Cause Analysis",
             "Module 5: Adaptive AI Diagnostic Agent",
             "Module 6: What-If Scenario Simulation Engine",
-            "Module 7: Intelligent Recovery Planning and Risk Assessment"
+            "Module 7: Intelligent Recovery Planning and Risk Assessment",
+            "Module 8: Automated Recovery Validation and Verification"
         ],
         "status": "operational",
         "api_docs": "/docs",
@@ -80,9 +81,13 @@ def root():
             "simulation_evaluation": "/api/simulation/evaluation",
             "recovery_plans": "/api/recovery/plans",
             "recovery_options": "/api/recovery/options",
-            "recovery_evaluation": "/api/recovery/evaluation"
+            "recovery_evaluation": "/api/recovery/evaluation",
+            "validation_runs": "/api/validation/runs",
+            "validation_config": "/api/validation/config",
+            "validation_evaluation": "/api/validation/evaluation"
         }
     }
+
 
 if __name__ == "__main__":
     import uvicorn

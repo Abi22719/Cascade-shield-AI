@@ -40,7 +40,8 @@ export default function Navbar({
                activeModule === 'cascade-prediction' ? 'Module 3' : 
                activeModule === 'root-cause-analysis' ? 'Module 4' : 
                activeModule === 'diagnostic-agent' ? 'Module 5' : 
-               activeModule === 'what-if-simulation' ? 'Module 6' : 'Module 7'}
+               activeModule === 'what-if-simulation' ? 'Module 6' : 
+               activeModule === 'recovery-planning' ? 'Module 7' : 'Module 8'}
             </span>
           </h1>
           <p className="brand-subtitle">
@@ -110,7 +111,16 @@ export default function Navbar({
           <LifeBuoy size={15} />
           <span>Recovery Planner</span>
         </button>
+        <button
+          className={`nav-tab-btn ${activeModule === 'recovery-validation' ? 'active' : ''}`}
+          onClick={() => onSelectModule('recovery-validation')}
+          title="Module 8: Automated Recovery Validation and Verification"
+        >
+          <ShieldCheck size={15} />
+          <span>Recovery Validation</span>
+        </button>
       </div>
+
 
       <div className="header-actions">
         <div className="simulated-pill" title="All telemetry data is dynamically simulated">
