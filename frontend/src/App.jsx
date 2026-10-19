@@ -11,12 +11,13 @@ import NotificationToast from './components/NotificationToast';
 import AnomalyDashboard from './pages/AnomalyDashboard';
 import CascadePredictionDashboard from './pages/CascadePredictionDashboard';
 import RCADashboard from './pages/RCADashboard';
+import DiagnosticAgentDashboard from './pages/DiagnosticAgentDashboard';
 import { api } from './services/api';
 import { anomalyApi } from './services/anomalyApi';
 import './styles/App.css';
 
 export default function App() {
-  const [activeModule, setActiveModule] = useState('digital-twin'); // 'digital-twin' | 'anomaly-detection' | 'cascade-prediction' | 'root-cause-analysis'
+  const [activeModule, setActiveModule] = useState('digital-twin'); // 'digital-twin' | 'anomaly-detection' | 'cascade-prediction' | 'root-cause-analysis' | 'diagnostic-agent'
   const [unacknowledgedCount, setUnacknowledgedCount] = useState(0);
 
   const [graphData, setGraphData] = useState({ nodes: [], edges: [], summary: {}, cycles: [] });
@@ -329,6 +330,11 @@ export default function App() {
       {/* MODULE 4 VIEW: EVIDENCE-GROUNDED ROOT CAUSE ANALYSIS (RCA) */}
       {activeModule === 'root-cause-analysis' && (
         <RCADashboard onAddToast={addToast} />
+      )}
+
+      {/* MODULE 5 VIEW: ADAPTIVE AI DIAGNOSTIC AGENT */}
+      {activeModule === 'diagnostic-agent' && (
+        <DiagnosticAgentDashboard onAddToast={addToast} />
       )}
 
       {/* Modals */}

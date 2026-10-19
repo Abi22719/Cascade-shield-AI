@@ -28,4 +28,8 @@ api_router.include_router(cascade_router)
 from app.api.rca_routes import router as rca_router
 api_router.include_router(rca_router)
 
+# Module 5 routes
+from app.api.agent_routes import router as agent_router
+api_router.include_router(agent_router)
+
 

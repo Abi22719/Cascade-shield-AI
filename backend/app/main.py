@@ -34,8 +34,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="CascadeShield AI - Cloud Resilience Digital Twin & Intelligent Agent",
-    description="Modules 1, 2, 3 & 4: Digital Twin, Anomaly Detection, Cascade Prediction & Root Cause Analysis",
-    version="4.0.0",
+    description="Modules 1, 2, 3, 4 & 5: Digital Twin, Anomaly Detection, Cascade Prediction, Root Cause Analysis & Adaptive AI Diagnostic Agent",
+    version="5.0.0",
     lifespan=lifespan
 )
 
@@ -58,7 +58,8 @@ def root():
             "Module 1: Cloud Digital Twin and Dependency Mapping",
             "Module 2: AI-Based Anomaly Detection and Early Warning",
             "Module 3: Cascading Failure Prediction Engine",
-            "Module 4: Evidence-Grounded Root Cause Analysis"
+            "Module 4: Evidence-Grounded Root Cause Analysis",
+            "Module 5: Adaptive AI Diagnostic Agent"
         ],
         "status": "operational",
         "api_docs": "/docs",
@@ -68,9 +69,10 @@ def root():
             "dependencies": "/api/dependencies",
             "graph": "/api/graph",
             "anomalies_summary": "/api/anomalies/summary",
-            "anomalies_detect": "/api/anomalies/detect",
-            "anomalies_evaluation": "/api/anomalies/evaluation",
-            "anomalies_thresholds": "/api/anomalies/thresholds"
+            "cascade_predict": "/api/cascade/predict",
+            "rca_analyze": "/api/rca/analyze",
+            "agent_sessions": "/api/agent/sessions",
+            "agent_evaluation": "/api/agent/evaluation"
         }
     }
 

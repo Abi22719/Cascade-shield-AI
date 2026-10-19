@@ -9,7 +9,8 @@ import {
   Network,
   BellRing,
   GitBranch,
-  Search
+  Search,
+  Bot
 } from 'lucide-react';
 
 export default function Navbar({ 
@@ -34,7 +35,8 @@ export default function Navbar({
             <span className="module-badge">
               {activeModule === 'digital-twin' ? 'Module 1' : 
                activeModule === 'anomaly-detection' ? 'Module 2' : 
-               activeModule === 'cascade-prediction' ? 'Module 3' : 'Module 4'}
+               activeModule === 'cascade-prediction' ? 'Module 3' : 
+               activeModule === 'root-cause-analysis' ? 'Module 4' : 'Module 5'}
             </span>
           </h1>
           <p className="brand-subtitle">
@@ -79,6 +81,14 @@ export default function Navbar({
         >
           <Search size={15} />
           <span>Root Cause RCA</span>
+        </button>
+        <button
+          className={`nav-tab-btn ${activeModule === 'diagnostic-agent' ? 'active' : ''}`}
+          onClick={() => onSelectModule('diagnostic-agent')}
+          title="Module 5: Adaptive AI Diagnostic Agent"
+        >
+          <Bot size={15} />
+          <span>Diagnostic Agent</span>
         </button>
       </div>
 

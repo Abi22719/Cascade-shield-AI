@@ -3,6 +3,7 @@ from app.models.dependency import DependencyModel
 from app.models.alert_model import AlertModel
 from app.models.cascade_model import CascadeScenarioModel
 from app.models.rca_model import RCAIncidentModel, RCAEvidenceModel, RCACandidateModel, RCAReportModel
+from app.models.agent_model import AgentSessionModel, AgentActionHistoryModel, AgentSessionResultModel
 
 __all__ = [
     "ServiceModel", 
@@ -12,5 +13,8 @@ __all__ = [
     "RCAIncidentModel",
     "RCAEvidenceModel",
     "RCACandidateModel",
-    "RCAReportModel"
+    "RCAReportModel",
+    "AgentSessionModel",
+    "AgentActionHistoryModel",
+    "AgentSessionResultModel"
 ]
