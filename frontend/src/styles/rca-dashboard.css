@@ -1,0 +1,428 @@
+/* Root Cause Analysis (RCA) Dashboard Styles */
+
+.rca-dashboard-container {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  gap: 20px;
+  max-width: 1650px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Header */
+.rca-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.rca-title-group h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rca-title-group p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.rca-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Incident Presets Bar */
+.rca-presets-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  overflow-x: auto;
+}
+
+.rca-preset-btn {
+  background: var(--bg-hover);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  font-size: 0.75rem;
+  padding: 6px 12px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.rca-preset-btn:hover {
+  border-color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.15);
+  color: #c4b5fd;
+}
+
+/* Summary Cards Grid */
+.rca-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.rca-summary-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.rca-summary-card:hover {
+  border-color: var(--border-subtle);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.rca-summary-card.accent-purple {
+  border-left: 4px solid #8b5cf6;
+}
+
+.rca-summary-card.accent-red {
+  border-left: 4px solid #ef4444;
+}
+
+.rca-summary-card.accent-orange {
+  border-left: 4px solid #f97316;
+}
+
+.rca-summary-card.accent-blue {
+  border-left: 4px solid #3b82f6;
+}
+
+.rca-summary-card.accent-green {
+  border-left: 4px solid #10b981;
+}
+
+.rca-summary-card .card-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rca-summary-card .card-value {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-top: 8px;
+}
+
+.rca-summary-card .card-subtext {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* Workspace Grid: 340px form + 1fr candidates & graph */
+.rca-workspace-grid {
+  display: grid;
+  grid-template-columns: 340px 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 1280px) {
+  .rca-workspace-grid {
+    grid-template-columns: 340px 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .rca-workspace-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Form Card */
+.rca-form-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.rca-form-card h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+}
+
+.btn-analyze {
+  width: 100%;
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: opacity 0.2s;
+  margin-top: 4px;
+}
+
+.btn-analyze:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+/* Candidates Card */
+.rca-candidates-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border-color);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.panel-header h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.candidates-list {
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  max-height: 480px;
+}
+
+.candidate-card {
+  background: var(--bg-hover);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.candidate-card.top-rank {
+  border-left: 4px solid #ef4444;
+  background: rgba(239, 68, 68, 0.05);
+}
+
+.candidate-card:hover {
+  border-color: #8b5cf6;
+}
+
+.candidate-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.candidate-rank-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: rgba(139, 92, 246, 0.2);
+  color: #c4b5fd;
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.candidate-score-bar-bg {
+  width: 100%;
+  height: 6px;
+  background: var(--bg-card);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.candidate-score-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+/* Confidence Labels */
+.confidence-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.confidence-pill.strong {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.confidence-pill.moderate {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fde047;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.confidence-pill.weak {
+  background: rgba(59, 130, 246, 0.15);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.4);
+}
+
+.confidence-pill.insufficient {
+  background: rgba(100, 116, 139, 0.2);
+  color: #cbd5e1;
+  border: 1px solid rgba(100, 116, 139, 0.4);
+}
+
+/* Timeline Panel */
+.rca-timeline-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.timeline-items-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.timeline-item-row {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 10px 14px;
+  background: var(--bg-hover);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  position: relative;
+}
+
+.timeline-item-row.critical {
+  border-left: 3px solid #ef4444;
+}
+
+.timeline-item-row.warning {
+  border-left: 3px solid #f59e0b;
+}
+
+.timeline-item-row.info {
+  border-left: 3px solid #3b82f6;
+}
+
+/* Two Column Bottom Grid: Hypotheses + Recommendations */
+.rca-bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 960px) {
+  .rca-bottom-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.hypothesis-card {
+  background: var(--bg-hover);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.recommendation-card {
+  background: var(--bg-hover);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.priority-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.priority-badge.p1 {
+  background: #ef4444;
+  color: white;
+}
+
+.priority-badge.p2 {
+  background: #f97316;
+  color: white;
+}
+
+.priority-badge.p3 {
+  background: #3b82f6;
+  color: white;
+}

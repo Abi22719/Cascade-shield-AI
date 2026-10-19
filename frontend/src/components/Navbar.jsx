@@ -8,7 +8,8 @@ import {
   Activity,
   Network,
   BellRing,
-  GitBranch
+  GitBranch,
+  Search
 } from 'lucide-react';
 
 export default function Navbar({ 
@@ -31,7 +32,9 @@ export default function Navbar({
           <h1>
             CascadeShield AI
             <span className="module-badge">
-              {activeModule === 'digital-twin' ? 'Module 1' : (activeModule === 'anomaly-detection' ? 'Module 2' : 'Module 3')}
+              {activeModule === 'digital-twin' ? 'Module 1' : 
+               activeModule === 'anomaly-detection' ? 'Module 2' : 
+               activeModule === 'cascade-prediction' ? 'Module 3' : 'Module 4'}
             </span>
           </h1>
           <p className="brand-subtitle">
@@ -68,6 +71,14 @@ export default function Navbar({
         >
           <GitBranch size={15} />
           <span>Cascade Engine</span>
+        </button>
+        <button
+          className={`nav-tab-btn ${activeModule === 'root-cause-analysis' ? 'active' : ''}`}
+          onClick={() => onSelectModule('root-cause-analysis')}
+          title="Module 4: Evidence-Grounded Root Cause Analysis (RCA)"
+        >
+          <Search size={15} />
+          <span>Root Cause RCA</span>
         </button>
       </div>
 

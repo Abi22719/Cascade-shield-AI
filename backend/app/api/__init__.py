@@ -24,3 +24,8 @@ api_router.include_router(alert_router)
 from app.api.cascade_routes import router as cascade_router
 api_router.include_router(cascade_router)
 
+# Module 4 routes
+from app.api.rca_routes import router as rca_router
+api_router.include_router(rca_router)
+
+

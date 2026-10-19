@@ -95,5 +95,10 @@ def test_sqlite_data_persistence():
         s2.close()
         engine2.dispose()
     finally:
+        import gc
+        gc.collect()
         if os.path.exists(tmp_db_path):
-            os.remove(tmp_db_path)
+            try:
+                os.remove(tmp_db_path)
+            except Exception:
+                pass

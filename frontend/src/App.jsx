@@ -10,12 +10,13 @@ import ConfirmModal from './components/ConfirmModal';
 import NotificationToast from './components/NotificationToast';
 import AnomalyDashboard from './pages/AnomalyDashboard';
 import CascadePredictionDashboard from './pages/CascadePredictionDashboard';
+import RCADashboard from './pages/RCADashboard';
 import { api } from './services/api';
 import { anomalyApi } from './services/anomalyApi';
 import './styles/App.css';
 
 export default function App() {
-  const [activeModule, setActiveModule] = useState('digital-twin'); // 'digital-twin' | 'anomaly-detection' | 'cascade-prediction'
+  const [activeModule, setActiveModule] = useState('digital-twin'); // 'digital-twin' | 'anomaly-detection' | 'cascade-prediction' | 'root-cause-analysis'
   const [unacknowledgedCount, setUnacknowledgedCount] = useState(0);
 
   const [graphData, setGraphData] = useState({ nodes: [], edges: [], summary: {}, cycles: [] });
@@ -323,6 +324,11 @@ export default function App() {
       {/* MODULE 3 VIEW: CASCADING FAILURE PREDICTION ENGINE */}
       {activeModule === 'cascade-prediction' && (
         <CascadePredictionDashboard onAddToast={addToast} />
+      )}
+
+      {/* MODULE 4 VIEW: EVIDENCE-GROUNDED ROOT CAUSE ANALYSIS (RCA) */}
+      {activeModule === 'root-cause-analysis' && (
+        <RCADashboard onAddToast={addToast} />
       )}
 
       {/* Modals */}
