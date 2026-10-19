@@ -44,4 +44,6 @@ api_router.include_router(recovery_router)
 from app.api.validation_routes import router as validation_router
 api_router.include_router(validation_router)
 
-
+# Module 9 routes
+from app.api.benchmark_routes import router as benchmark_router
+api_router.include_router(benchmark_router)

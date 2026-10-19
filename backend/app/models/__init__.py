@@ -24,6 +24,15 @@ from app.models.validation_models import (
     ValidationRecommendationModel,
     ValidationConfigModel
 )
+from app.models.benchmark_models import (
+    BenchmarkDatasetModel,
+    BenchmarkScenarioModel,
+    BenchmarkExperimentModel,
+    BenchmarkResultModel,
+    BenchmarkComparisonModel,
+    BenchmarkReportModel,
+    BenchmarkConfigModel
+)
 
 __all__ = [
     "ServiceModel", 
@@ -50,6 +59,14 @@ __all__ = [
     "ValidationCheckModel",
     "ValidationEvidenceModel",
     "ValidationRecommendationModel",
-    "ValidationConfigModel"
+    "ValidationConfigModel",
+    "BenchmarkDatasetModel",
+    "BenchmarkScenarioModel",
+    "BenchmarkExperimentModel",
+    "BenchmarkResultModel",
+    "BenchmarkComparisonModel",
+    "BenchmarkReportModel",
+    "BenchmarkConfigModel"
 ]
+
 

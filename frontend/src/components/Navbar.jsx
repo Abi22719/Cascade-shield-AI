@@ -12,7 +12,8 @@ import {
   Search,
   Bot,
   FlaskConical,
-  LifeBuoy
+  LifeBuoy,
+  Award
 } from 'lucide-react';
 
 export default function Navbar({ 
@@ -41,7 +42,8 @@ export default function Navbar({
                activeModule === 'root-cause-analysis' ? 'Module 4' : 
                activeModule === 'diagnostic-agent' ? 'Module 5' : 
                activeModule === 'what-if-simulation' ? 'Module 6' : 
-               activeModule === 'recovery-planning' ? 'Module 7' : 'Module 8'}
+               activeModule === 'recovery-planning' ? 'Module 7' : 
+               activeModule === 'recovery-validation' ? 'Module 8' : 'Module 9'}
             </span>
           </h1>
           <p className="brand-subtitle">
@@ -118,6 +120,14 @@ export default function Navbar({
         >
           <ShieldCheck size={15} />
           <span>Recovery Validation</span>
+        </button>
+        <button
+          className={`nav-tab-btn ${activeModule === 'resilience-benchmark' ? 'active' : ''}`}
+          onClick={() => onSelectModule('resilience-benchmark')}
+          title="Module 9: Resilience Benchmarking & Performance Evaluation"
+        >
+          <Award size={15} />
+          <span>Resilience Benchmark</span>
         </button>
       </div>
 

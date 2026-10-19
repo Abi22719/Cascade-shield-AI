@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database.database import engine, Base, SessionLocal
 from app.database.init_db import init_db
-import app.models  # Ensures all models (ServiceModel, DependencyModel, AlertModel) are registered
+import app.models  # Ensures all models (ServiceModel, DependencyModel, AlertModel, BenchmarkModel, etc.) are registered
 from app.api import api_router
 
 logging.basicConfig(
@@ -34,8 +34,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="CascadeShield AI - Cloud Resilience Digital Twin & Intelligent Agent",
-    description="Modules 1-8: Digital Twin, Anomaly Detection, Cascade Prediction, Root Cause Analysis, Adaptive AI Diagnostic Agent, What-If Simulation Engine, Intelligent Recovery Planning & Automated Recovery Validation and Verification",
-    version="8.0.0",
+    description="Modules 1-9: Digital Twin, Anomaly Detection, Cascade Prediction, Root Cause Analysis, Adaptive AI Diagnostic Agent, What-If Simulation Engine, Intelligent Recovery Planning, Automated Recovery Validation, and Resilience Benchmarking & Performance Evaluation",
+    version="9.0.0",
     lifespan=lifespan
 )
 
@@ -62,9 +62,11 @@ def root():
             "Module 5: Adaptive AI Diagnostic Agent",
             "Module 6: What-If Scenario Simulation Engine",
             "Module 7: Intelligent Recovery Planning and Risk Assessment",
-            "Module 8: Automated Recovery Validation and Verification"
+            "Module 8: Automated Recovery Validation and Verification",
+            "Module 9: Resilience Benchmarking and Performance Evaluation"
         ],
         "status": "operational",
+        "version": "9.0.0",
         "api_docs": "/docs",
         "endpoints": {
             "health": "/api/health",
@@ -84,7 +86,12 @@ def root():
             "recovery_evaluation": "/api/recovery/evaluation",
             "validation_runs": "/api/validation/runs",
             "validation_config": "/api/validation/config",
-            "validation_evaluation": "/api/validation/evaluation"
+            "validation_evaluation": "/api/validation/evaluation",
+            "benchmark_health": "/api/benchmark/health",
+            "benchmark_datasets": "/api/benchmark/datasets",
+            "benchmark_experiments": "/api/benchmark/experiments",
+            "benchmark_baselines": "/api/benchmark/baselines",
+            "benchmark_summary": "/api/benchmark/summary"
         }
     }
 

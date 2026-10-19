@@ -15,12 +15,13 @@ import DiagnosticAgentDashboard from './pages/DiagnosticAgentDashboard';
 import SimulationDashboard from './pages/SimulationDashboard';
 import RecoveryDashboard from './pages/RecoveryDashboard';
 import RecoveryValidationDashboard from './pages/RecoveryValidationDashboard';
+import BenchmarkDashboard from './pages/BenchmarkDashboard';
 import { api } from './services/api';
 import { anomalyApi } from './services/anomalyApi';
 import './styles/App.css';
 
 export default function App() {
-  const [activeModule, setActiveModule] = useState('digital-twin'); // 'digital-twin' | 'anomaly-detection' | 'cascade-prediction' | 'root-cause-analysis' | 'diagnostic-agent' | 'what-if-simulation' | 'recovery-planning' | 'recovery-validation'
+  const [activeModule, setActiveModule] = useState('digital-twin'); // 'digital-twin' | 'anomaly-detection' | 'cascade-prediction' | 'root-cause-analysis' | 'diagnostic-agent' | 'what-if-simulation' | 'recovery-planning' | 'recovery-validation' | 'resilience-benchmark'
   const [unacknowledgedCount, setUnacknowledgedCount] = useState(0);
 
   const [graphData, setGraphData] = useState({ nodes: [], edges: [], summary: {}, cycles: [] });
@@ -353,6 +354,11 @@ export default function App() {
       {/* MODULE 8 VIEW: AUTOMATED RECOVERY VALIDATION & VERIFICATION */}
       {activeModule === 'recovery-validation' && (
         <RecoveryValidationDashboard onAddToast={addToast} />
+      )}
+
+      {/* MODULE 9 VIEW: RESILIENCE BENCHMARKING & PERFORMANCE EVALUATION */}
+      {activeModule === 'resilience-benchmark' && (
+        <BenchmarkDashboard onAddToast={addToast} />
       )}
 
       {/* Modals */}
