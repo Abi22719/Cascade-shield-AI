@@ -47,3 +47,17 @@ api_router.include_router(validation_router)
 # Module 9 routes
 from app.api.benchmark_routes import router as benchmark_router
 api_router.include_router(benchmark_router)
+
+# Module 10 routes
+from app.api.dashboard_routes import router as dashboard_router
+from app.api.search_routes import router as search_router
+from app.api.notification_routes import router as notification_router
+from app.api.report_routes import router as report_router
+from app.api.workflow_routes import router as workflow_router
+
+api_router.include_router(dashboard_router)
+api_router.include_router(search_router)
+api_router.include_router(notification_router)
+api_router.include_router(report_router)
+api_router.include_router(workflow_router)
+

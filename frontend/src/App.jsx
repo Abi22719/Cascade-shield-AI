@@ -16,13 +16,23 @@ import SimulationDashboard from './pages/SimulationDashboard';
 import RecoveryDashboard from './pages/RecoveryDashboard';
 import RecoveryValidationDashboard from './pages/RecoveryValidationDashboard';
 import BenchmarkDashboard from './pages/BenchmarkDashboard';
+import UnifiedDashboard from './pages/UnifiedDashboard';
+import IncidentWorkflowPage from './pages/IncidentWorkflowPage';
+import ReportsPage from './pages/ReportsPage';
+import GlobalSearchModal from './components/GlobalSearchModal';
+import NotificationModal from './components/NotificationModal';
 import { api } from './services/api';
 import { anomalyApi } from './services/anomalyApi';
+import { dashboardApi } from './services/dashboardApi';
 import './styles/App.css';
+import './styles/dashboard.css';
 
 export default function App() {
-  const [activeModule, setActiveModule] = useState('digital-twin'); // 'digital-twin' | 'anomaly-detection' | 'cascade-prediction' | 'root-cause-analysis' | 'diagnostic-agent' | 'what-if-simulation' | 'recovery-planning' | 'recovery-validation' | 'resilience-benchmark'
+  const [activeModule, setActiveModule] = useState('unified-dashboard'); // 'unified-dashboard' | 'incident-workflow' | 'reports-center' | 'digital-twin' | 'anomaly-detection' | 'cascade-prediction' | 'root-cause-analysis' | 'diagnostic-agent' | 'what-if-simulation' | 'recovery-planning' | 'recovery-validation' | 'resilience-benchmark'
   const [unacknowledgedCount, setUnacknowledgedCount] = useState(0);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
 
   const [graphData, setGraphData] = useState({ nodes: [], edges: [], summary: {}, cycles: [] });
   const [metricsSummary, setMetricsSummary] = useState(null);
@@ -95,6 +105,26 @@ export default function App() {
   useEffect(() => {
     loadDigitalTwin();
   }, [loadDigitalTwin]);
+
+  // Global Ctrl+K shortcut and notifications counter
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsSearchOpen(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
+    // Initial notifications unread count
+    dashboardApi.getNotifications({ unread_only: true }).then(res => {
+      if (res?.unread_count !== undefined) {
+        setUnreadNotificationCount(res.unread_count);
+      }
+    }).catch(() => {});
+
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Selection handlers
   const handleSelectNode = (nodeData) => {
@@ -260,10 +290,13 @@ export default function App() {
         activeModule={activeModule}
         onSelectModule={setActiveModule}
         unacknowledgedAlertsCount={unacknowledgedCount}
+        unreadNotificationCount={unreadNotificationCount}
+        onOpenSearch={() => setIsSearchOpen(true)}
+        onOpenNotifications={() => setIsNotificationsOpen(true)}
         onAddService={() => setIsAddServiceOpen(true)}
         onAddDependency={() => setIsAddDependencyOpen(true)}
         onResetTopology={handleResetTopologyConfirm}
-        onRefresh={loadDigitalTwin}
+        onRefresh={activeModule === 'digital-twin' ? loadDigitalTwin : undefined}
         loading={loading}
       />
 
@@ -361,6 +394,26 @@ export default function App() {
         <BenchmarkDashboard onAddToast={addToast} />
       )}
 
+      {/* MODULE 10 VIEW: UNIFIED EXECUTIVE DASHBOARD & AI INSIGHTS */}
+      {activeModule === 'unified-dashboard' && (
+        <UnifiedDashboard 
+          onNavigateModule={setActiveModule} 
+          onOpenSearch={() => setIsSearchOpen(true)} 
+        />
+      )}
+
+      {/* MODULE 10 VIEW: 10-STEP GUIDED INCIDENT INVESTIGATION WORKFLOW */}
+      {activeModule === 'incident-workflow' && (
+        <IncidentWorkflowPage 
+          onNavigateModule={setActiveModule} 
+        />
+      )}
+
+      {/* MODULE 10 VIEW: UNIFIED REPORTS CENTER */}
+      {activeModule === 'reports-center' && (
+        <ReportsPage />
+      )}
+
       {/* Modals */}
       <ServiceModal
         isOpen={isAddServiceOpen}
@@ -384,6 +437,26 @@ export default function App() {
         confirmVariant={confirmConfig?.confirmVariant}
         onConfirm={confirmConfig?.onConfirm || (() => {})}
         onClose={() => setConfirmConfig(null)}
+      />
+
+      {/* Global Search Modal */}
+      <GlobalSearchModal
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        onNavigateModule={setActiveModule}
+      />
+
+      {/* Notifications Drawer Modal */}
+      <NotificationModal
+        isOpen={isNotificationsOpen}
+        onClose={() => {
+          setIsNotificationsOpen(false);
+          dashboardApi.getNotifications({ unread_only: true }).then(res => {
+            if (res?.unread_count !== undefined) {
+              setUnreadNotificationCount(res.unread_count);
+            }
+          }).catch(() => {});
+        }}
       />
 
       {/* Notifications */}

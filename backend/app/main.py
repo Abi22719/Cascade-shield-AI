@@ -34,8 +34,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="CascadeShield AI - Cloud Resilience Digital Twin & Intelligent Agent",
-    description="Modules 1-9: Digital Twin, Anomaly Detection, Cascade Prediction, Root Cause Analysis, Adaptive AI Diagnostic Agent, What-If Simulation Engine, Intelligent Recovery Planning, Automated Recovery Validation, and Resilience Benchmarking & Performance Evaluation",
-    version="9.0.0",
+    description="Modules 1-10: Digital Twin, Anomaly Detection, Cascade Prediction, Root Cause Analysis, Adaptive AI Diagnostic Agent, What-If Simulation Engine, Intelligent Recovery Planning, Automated Recovery Validation, Resilience Benchmarking, and Unified Dashboard, Reports & Explainable AI Insights",
+    version="10.0.0",
     lifespan=lifespan
 )
 
@@ -63,10 +63,11 @@ def root():
             "Module 6: What-If Scenario Simulation Engine",
             "Module 7: Intelligent Recovery Planning and Risk Assessment",
             "Module 8: Automated Recovery Validation and Verification",
-            "Module 9: Resilience Benchmarking and Performance Evaluation"
+            "Module 9: Resilience Benchmarking and Performance Evaluation",
+            "Module 10: Unified Dashboard, Reports, and Explainable AI Insights"
         ],
         "status": "operational",
-        "version": "9.0.0",
+        "version": "10.0.0",
         "api_docs": "/docs",
         "endpoints": {
             "health": "/api/health",
@@ -91,7 +92,15 @@ def root():
             "benchmark_datasets": "/api/benchmark/datasets",
             "benchmark_experiments": "/api/benchmark/experiments",
             "benchmark_baselines": "/api/benchmark/baselines",
-            "benchmark_summary": "/api/benchmark/summary"
+            "benchmark_summary": "/api/benchmark/summary",
+            "dashboard_summary": "/api/dashboard/summary",
+            "dashboard_health": "/api/dashboard/health",
+            "dashboard_activity": "/api/dashboard/activity",
+            "dashboard_insights": "/api/dashboard/insights",
+            "search": "/api/search",
+            "notifications": "/api/notifications",
+            "reports": "/api/reports",
+            "workflow": "/api/workflow/incidents/{incident_id}"
         }
     }
 

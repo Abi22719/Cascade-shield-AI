@@ -9,7 +9,12 @@ CascadeShield AI is an intelligent, auditable, enterprise-grade cloud resilience
 ```mermaid
 flowchart TD
     subgraph UI["Frontend (React 19 + Cytoscape.js + Recharts + Lucide)"]
-        Nav["Navbar (Module 1 / 2 / 3 / 4 / 5 / 6 / 7 / 8 / 9 Switcher)"]
+        Nav["Navbar (Unified Dashboard / Modules 1-9 / Incident Workflow / Reports)"]
+        Dash["Module 10: Unified Executive Dashboard & Explainability Panel"]
+        Workflow["Module 10: Guided 10-Step Incident Investigation Workflow"]
+        Reports["Module 10: Reports Center & CSV/JSON Exporter"]
+        SearchModal["Module 10: Global Entity Search (Ctrl+K)"]
+        NotifCenter["Module 10: Centralized Notifications Drawer"]
         Twin["Module 1: Digital Twin & Dependency Graph"]
         Anomaly["Module 2: Anomaly Detection Dashboard"]
         Cascade["Module 3: Cascading Failure Prediction Engine"]
@@ -19,13 +24,16 @@ flowchart TD
         Recovery["Module 7: Intelligent Recovery Planning & Risk Assessment"]
         Validation["Module 8: Automated Recovery Validation & Verification"]
         Benchmark["Module 9: Resilience Benchmarking & Evaluation Dashboard"]
-        BMScore["0-100 Overall Resilience Score Gauge & Pillar Breakdown"]
-        BMComp["Side-by-Side Baseline vs Candidate Comparison Matrix"]
-        BMScn["10-Scenario Isolated Ground Truth Catalog"]
     end
 
     subgraph Backend["FastAPI Modular Backend (Python 3.10+)"]
         API["REST Router (/api)"]
+        DashboardSvc["DashboardService: Summary & Health Aggregations (Mod 10)"]
+        InsightSvc["InsightService: Grounded Explainable AI Reasoner (Mod 10)"]
+        SearchSvc["SearchService: Multi-Entity Real-Time Search (Mod 10)"]
+        ReportSvc["ReportService & ReportExportService: CSV/JSON Exporter (Mod 10)"]
+        WorkflowSvc["WorkflowService: 10-Step Investigation Orchestrator (Mod 10)"]
+        NotificationSvc["NotificationService: Alert Tracking & Deduplication (Mod 10)"]
         GraphEngine["NetworkX DiGraph Engine (Module 1)"]
         ThresholdEngine["Configurable Threshold Detector (Module 2)"]
         MLEngine["Scikit-Learn Isolation Forest Engine (Module 2)"]
@@ -39,12 +47,6 @@ flowchart TD
         ValidationEngine["Master Recovery Validation Orchestrator (Module 8)"]
         ValidationRuleEngine["Operational SLA & Threshold Rule Engine (Module 8)"]
         BenchmarkExperimentService["Benchmark Experiment Runner & Orchestrator (Module 9)"]
-        BenchmarkDatasetService["Synthetic Scenario & Isolated Ground Truth Service (Module 9)"]
-        BenchmarkMetricsService["Zero-Safe Precision/Recall/F1/MRR/MTTR Metrics Engine (Module 9)"]
-        BenchmarkBaselineService["Canonical Baselines Execution Engine (Module 9)"]
-        BenchmarkComparisonService["Side-by-Side Paired Comparison Engine (Module 9)"]
-        BenchmarkReportService["Markdown & JSON Formatted Report Generator (Module 9)"]
-        BenchmarkExportService["CSV & JSON Data Exporter (Module 9)"]
     end
 
     subgraph Storage["SQLite Persistent Database (cascadeshield.db)"]
@@ -57,7 +59,9 @@ flowchart TD
         T6["Simulation Scenarios, Runs, Events & Step States (Mod 6)"]
         T7["Recovery Plans, Actions, Runs, Events & Evaluations (Mod 7)"]
         T8["Validation Runs, Checks, Evidence, Recs & Config (Mod 8)"]
-        T9["Benchmark Datasets, Scenarios, Experiments, Results, Comparisons & Reports (Mod 9)"]
+        T9["Benchmark Datasets, Scenarios, Experiments, Results & Baselines (Mod 9)"]
+        T10["Notifications, Activity Events & Generated Reports (Mod 10)"]
+    end
     end
 
     Nav --> Twin
@@ -179,6 +183,14 @@ flowchart TD
 - **Full Experiment Lifecycle**: Creation, automated running, cancellation, progress tracking, persistence, side-by-side run comparison, and multi-format exports (Markdown, JSON, CSV).
 - **Strict Safety Isolation**: Evaluates against synthetic models and isolated in-memory sandboxes with zero real cloud mutations.
 
+### 2.10. Module 10: Unified Dashboard, Reports & Explainable AI Insights
+- **Unified Single-Pane Executive Dashboard**: Real-time cross-module overview synthesizing digital twin telemetry, active anomalies, blast radius predictions, open RCA incidents, pending recovery plans, and latest resilience scores.
+- **Explainable AI Insights Engine**: Grounded, evidence-backed reasoning synthesizing findings across Modules 2 to 9. Explicitly reports uncertainty notes, alternative hypotheses, risk factors, and next actionable diagnostic steps without unsupported causal claims.
+- **Guided 10-Step Incident Investigation Workflow**: Step-by-step interactive workflow tracing the complete failure lifecycle: Anomaly Detection -> Incident Creation -> Blast Radius -> RCA Attribution -> Diagnostic Agent -> What-If Simulation -> Recovery Planning -> Sandbox Execution -> 5-Pillar Validation -> Final Audit Report.
+- **Centralized Reports Center & Multi-Format Exporter**: On-demand report synthesis (service health, anomaly early warnings, blast radius, RCA investigation, recovery comparisons, validation outcomes, benchmark evaluations, and incident lifecycles) with one-click Markdown preview, CSV export, and JSON export.
+- **Global Entity Search (Ctrl+K)**: Instant multi-entity real-time search across services, alerts, incidents, simulation scenarios, recovery plans, validation runs, and benchmark experiments with module-filtering pills.
+- **System Notification & Activity Audit Stream**: Persistent notifications with deduplication, read tracking, and continuous event stream auditing every operational milestone.
+
 ---
 
 ## 3. Mathematical & Algorithmic Formulations
@@ -199,6 +211,24 @@ Where $\mathcal{P} = \{\text{detection: 0.15}, \text{prediction: 0.15}, \text{rc
 ---
 
 ## 4. REST API Reference
+
+### Module 10 Endpoints (`/api/dashboard`, `/api/search`, `/api/notifications`, `/api/reports`, `/api/workflow`)
+- `GET /api/dashboard/summary`: High-level aggregated summary across all system modules
+- `GET /api/dashboard/health`: Operational health status and active simulation mode guarantee
+- `GET /api/dashboard/activity`: Cross-module audit timeline of recent system events
+- `GET /api/dashboard/insights`: Grounded explainable AI insights with explicit uncertainty bounds
+- `GET /api/search`: Global search across services, alerts, incidents, scenarios, plans, and benchmarks
+- `GET /api/search/suggestions`: Search auto-completion suggestions
+- `GET /api/notifications`: Centralized notifications list with read/unread filtering
+- `POST /api/notifications/{id}/read`: Mark specific notification as read
+- `POST /api/notifications/read-all`: Mark all active notifications as read
+- `GET /api/reports`: Catalog of generated system audit reports
+- `POST /api/reports/generate`: Generate on-demand report (service health, anomalies, cascades, RCA, benchmark, lifecycle)
+- `GET /api/reports/{id}`: Retrieve report content and metadata
+- `GET /api/reports/{id}/export/csv`: Export report as downloadable CSV
+- `GET /api/reports/{id}/export/json`: Export report payload as structured JSON
+- `GET /api/workflow/incidents/{id}`: Retrieve guided 10-step incident investigation lifecycle
+- `GET /api/workflow/summary`: Global progress summary across investigation steps
 
 ### Module 9 Endpoints (`/api/benchmark`)
 - `GET /api/benchmark/health`: Module 9 health status and capability list
@@ -249,7 +279,7 @@ From the root workspace:
 ```powershell
 $env:PYTHONPATH="backend"; python -m pytest backend/tests -v
 ```
-*(Executes all **201 automated tests** across Modules 1 to 9 with a 100% pass rate in ~14.9s).*
+*(Executes all **218 automated tests** across Modules 1 to 10 with a 100% pass rate).*
 
 ### 6.2. Start FastAPI Backend
 ```powershell

@@ -33,6 +33,11 @@ from app.models.benchmark_models import (
     BenchmarkReportModel,
     BenchmarkConfigModel
 )
+from app.models.dashboard_models import (
+    NotificationModel,
+    ActivityEventModel,
+    GeneratedReportModel
+)
 
 __all__ = [
     "ServiceModel", 
@@ -66,7 +71,10 @@ __all__ = [
     "BenchmarkResultModel",
     "BenchmarkComparisonModel",
     "BenchmarkReportModel",
-    "BenchmarkConfigModel"
+    "BenchmarkConfigModel",
+    "NotificationModel",
+    "ActivityEventModel",
+    "GeneratedReportModel"
 ]
 
 
