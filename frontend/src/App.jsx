@@ -13,12 +13,13 @@ import CascadePredictionDashboard from './pages/CascadePredictionDashboard';
 import RCADashboard from './pages/RCADashboard';
 import DiagnosticAgentDashboard from './pages/DiagnosticAgentDashboard';
 import SimulationDashboard from './pages/SimulationDashboard';
+import RecoveryDashboard from './pages/RecoveryDashboard';
 import { api } from './services/api';
 import { anomalyApi } from './services/anomalyApi';
 import './styles/App.css';
 
 export default function App() {
-  const [activeModule, setActiveModule] = useState('digital-twin'); // 'digital-twin' | 'anomaly-detection' | 'cascade-prediction' | 'root-cause-analysis' | 'diagnostic-agent' | 'what-if-simulation'
+  const [activeModule, setActiveModule] = useState('digital-twin'); // 'digital-twin' | 'anomaly-detection' | 'cascade-prediction' | 'root-cause-analysis' | 'diagnostic-agent' | 'what-if-simulation' | 'recovery-planning'
   const [unacknowledgedCount, setUnacknowledgedCount] = useState(0);
 
   const [graphData, setGraphData] = useState({ nodes: [], edges: [], summary: {}, cycles: [] });
@@ -341,6 +342,11 @@ export default function App() {
       {/* MODULE 6 VIEW: WHAT-IF SCENARIO SIMULATION ENGINE */}
       {activeModule === 'what-if-simulation' && (
         <SimulationDashboard onAddToast={addToast} />
+      )}
+
+      {/* MODULE 7 VIEW: INTELLIGENT RECOVERY PLANNING & RISK ASSESSMENT */}
+      {activeModule === 'recovery-planning' && (
+        <RecoveryDashboard onAddToast={addToast} />
       )}
 
       {/* Modals */}

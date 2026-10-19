@@ -36,4 +36,8 @@ api_router.include_router(agent_router)
 from app.api.simulation_routes import router as simulation_router
 api_router.include_router(simulation_router)
 
+# Module 7 routes
+from app.api.recovery_routes import router as recovery_router
+api_router.include_router(recovery_router)
+
 

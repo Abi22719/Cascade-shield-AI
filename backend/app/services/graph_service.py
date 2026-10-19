@@ -203,3 +203,12 @@ class GraphService:
             "impact_tiers": impact_tiers,
             "paths": paths
         }
+
+    @classmethod
+    def get_dependency_graph(cls, db) -> nx.DiGraph:
+        """
+        Loads all services and dependencies from the database and builds a NetworkX DiGraph.
+        """
+        services = db.query(ServiceModel).all()
+        dependencies = db.query(DependencyModel).all()
+        return cls.build_networkx_graph(services, dependencies)

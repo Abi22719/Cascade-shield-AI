@@ -1,0 +1,337 @@
+/* Module 7: Intelligent Recovery Planning and Risk Assessment Stylesheet */
+
+.recovery-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  color: #e2e8f0;
+  max-width: 1700px;
+  margin: 0 auto;
+}
+
+/* Header */
+.rec-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.rec-title-group h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #f8fafc;
+  margin: 0;
+}
+
+.rec-title-group p {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  margin: 0.2rem 0 0 0;
+}
+
+.btn-rec-primary {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.45rem 0.95rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.btn-rec-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #059669, #047857);
+  transform: translateY(-1px);
+}
+
+.btn-rec-secondary {
+  background: rgba(30, 41, 59, 0.8);
+  color: #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-rec-secondary:hover:not(:disabled) {
+  background: rgba(51, 65, 85, 0.9);
+  color: #f8fafc;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.btn-rec-secondary:disabled,
+.btn-rec-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* KPI Cards */
+.rec-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.9rem;
+}
+
+.rec-kpi-card {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.rec-kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #10b981;
+}
+
+.rec-kpi-card.warning::before { background: #f59e0b; }
+.rec-kpi-card.danger::before { background: #ef4444; }
+.rec-kpi-card.info::before { background: #0ea5e9; }
+.rec-kpi-card.purple::before { background: #8b5cf6; }
+
+.rec-kpi-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rec-kpi-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #f8fafc;
+  font-feature-settings: 'tnum';
+}
+
+.rec-kpi-sub {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+/* Generator & Plan Selector Bar */
+.rec-control-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 0.75rem 1.25rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.rec-select-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 320px;
+}
+
+.rec-dropdown {
+  flex: 1;
+  max-width: 480px;
+  background: #0f172a;
+  color: #f1f5f9;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.rec-dropdown:focus {
+  border-color: #10b981;
+}
+
+.strategy-badge {
+  font-size: 0.72rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.strategy-badge.balanced { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4); }
+.strategy-badge.lowest_risk { background: rgba(59, 130, 246, 0.2); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.4); }
+.strategy-badge.fastest_recovery { background: rgba(245, 158, 11, 0.2); color: #fcd34d; border: 1px solid rgba(245, 158, 11, 0.4); }
+.strategy-badge.lowest_cost { background: rgba(139, 92, 246, 0.2); color: #c4b5fd; border: 1px solid rgba(139, 92, 246, 0.4); }
+
+/* Main Workspace Grid */
+.rec-workspace-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 1.25rem;
+  min-height: 520px;
+}
+
+@media (max-width: 1200px) {
+  .rec-workspace-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.rec-panel {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.rec-panel-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(30, 41, 59, 0.4);
+}
+
+.rec-panel-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #f1f5f9;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rec-panel-body {
+  padding: 1.1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow: auto;
+}
+
+/* Action Sequence Cards */
+.action-card {
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.action-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.action-order-badge {
+  background: rgba(16, 185, 129, 0.2);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.reversibility-badge {
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+}
+
+.reversibility-badge.fully_reversible { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+.reversibility-badge.partially_reversible { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+.reversibility-badge.irreversible { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+
+/* Risk Factor Progress Bars */
+.risk-factor-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.risk-factor-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+}
+
+.risk-factor-bar-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.risk-factor-bar-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+/* Timeline Events in Recovery */
+.rec-event-card {
+  background: rgba(30, 41, 59, 0.5);
+  border-left: 3px solid #10b981;
+  border-radius: 6px;
+  padding: 0.65rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+}
+
+.rec-event-card.PRECONDITION_FAILED,
+.rec-event-card.ACTION_FAILED {
+  border-left-color: #ef4444;
+}
+
+.rec-event-card.ROLLBACK_TRIGGERED {
+  border-left-color: #f59e0b;
+}
+
+.rec-event-card.CASCADE_RESOLVED {
+  border-left-color: #0ea5e9;
+}

@@ -11,7 +11,8 @@ import {
   GitBranch,
   Search,
   Bot,
-  FlaskConical
+  FlaskConical,
+  LifeBuoy
 } from 'lucide-react';
 
 export default function Navbar({ 
@@ -38,7 +39,8 @@ export default function Navbar({
                activeModule === 'anomaly-detection' ? 'Module 2' : 
                activeModule === 'cascade-prediction' ? 'Module 3' : 
                activeModule === 'root-cause-analysis' ? 'Module 4' : 
-               activeModule === 'diagnostic-agent' ? 'Module 5' : 'Module 6'}
+               activeModule === 'diagnostic-agent' ? 'Module 5' : 
+               activeModule === 'what-if-simulation' ? 'Module 6' : 'Module 7'}
             </span>
           </h1>
           <p className="brand-subtitle">
@@ -99,6 +101,14 @@ export default function Navbar({
         >
           <FlaskConical size={15} />
           <span>What-If Simulator</span>
+        </button>
+        <button
+          className={`nav-tab-btn ${activeModule === 'recovery-planning' ? 'active' : ''}`}
+          onClick={() => onSelectModule('recovery-planning')}
+          title="Module 7: Intelligent Recovery Planning & Risk Assessment"
+        >
+          <LifeBuoy size={15} />
+          <span>Recovery Planner</span>
         </button>
       </div>
 

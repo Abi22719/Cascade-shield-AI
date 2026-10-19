@@ -10,6 +10,13 @@ from app.models.simulation_model import (
     SimulationEventModel,
     SimulationServiceStateModel
 )
+from app.models.recovery_models import (
+    RecoveryPlanModel,
+    RecoveryActionModel,
+    RecoverySimulationRunModel,
+    RecoveryEventModel,
+    RecoveryEvaluationModel
+)
 
 __all__ = [
     "ServiceModel", 
@@ -26,5 +33,10 @@ __all__ = [
     "SimulationScenarioModel",
     "SimulationRunModel",
     "SimulationEventModel",
-    "SimulationServiceStateModel"
+    "SimulationServiceStateModel",
+    "RecoveryPlanModel",
+    "RecoveryActionModel",
+    "RecoverySimulationRunModel",
+    "RecoveryEventModel",
+    "RecoveryEvaluationModel"
 ]
