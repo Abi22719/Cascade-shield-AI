@@ -71,6 +71,14 @@
   color: #c4b5fd;
 }
 
+.rca-preset-btn.active {
+  border-color: #8b5cf6;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.35), rgba(124, 58, 237, 0.45));
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.4);
+}
+
 /* Summary Cards Grid */
 .rca-summary-grid {
   display: grid;
@@ -250,6 +258,7 @@
   gap: 10px;
   transition: all 0.2s;
   position: relative;
+  cursor: pointer;
 }
 
 .candidate-card.top-rank {
@@ -259,6 +268,13 @@
 
 .candidate-card:hover {
   border-color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.08);
+}
+
+.candidate-card.is-selected {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.35);
+  background: rgba(139, 92, 246, 0.12);
 }
 
 .candidate-header {
@@ -425,4 +441,90 @@
 .priority-badge.p3 {
   background: #3b82f6;
   color: white;
+}
+
+/* RCA Dependency Impact Graph Panel */
+.rca-graph-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 540px;
+  min-height: 480px;
+}
+
+.rca-graph-panel .graph-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-color);
+  background: rgba(0, 0, 0, 0.2);
+  z-index: 5;
+}
+
+.rca-graph-panel .graph-legend-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+}
+
+.rca-graph-panel .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rca-graph-panel .legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.rca-graph-panel .timeline-btn {
+  background: var(--bg-hover);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.rca-graph-panel .timeline-btn:hover {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+
+.rca-canvas-wrapper {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  height: calc(100% - 48px);
+  min-height: 430px;
+  background-color: #080d1a;
+  background-image: 
+    radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.04) 0%, transparent 70%),
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 100% 100%, 28px 28px, 28px 28px;
+}
+
+.graph-viewport-canvas {
+  width: 100%;
+  height: 100%;
+  min-height: 430px;
+  position: absolute;
+  top: 0;
+  left: 0;
 }

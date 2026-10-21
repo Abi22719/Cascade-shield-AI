@@ -57,3 +57,57 @@ def get_metrics_summary(db: Session = Depends(get_db)):
         total_request_volume=total_volume,
         telemetry_type="simulated"
     )
+
+@router.post("/refresh", response_model=MetricsSummaryResponse)
+def refresh_telemetry_metrics(
+    jitter: bool = True,
+    db: Session = Depends(get_db)
+):
+    """
+    Triggers a live telemetry refresh across all services in the digital twin.
+    Simulates operational fluctuation (jitter) on healthy/warning services,
+    updates updated_at timestamps, recalculates health statuses,
+    logs an activity record, and returns the updated metrics summary.
+    """
+    import random
+    from datetime import datetime, timezone
+    from app.services.health_evaluator import evaluate_service_health
+
+    services = db.query(ServiceModel).all()
+    now = datetime.now(timezone.utc)
+
+    for s in services:
+        if jitter and s.health_status in ["HEALTHY", "WARNING"]:
+            s.cpu_usage = round(max(2.0, min(95.0, s.cpu_usage + random.uniform(-1.8, 1.8))), 1)
+            s.memory_usage = round(max(5.0, min(95.0, s.memory_usage + random.uniform(-1.2, 1.2))), 1)
+            lat_delta = random.uniform(-2.5, 2.5)
+            s.latency_ms = round(max(1.0, min(5000.0, s.latency_ms + lat_delta)), 1)
+            if s.error_rate < 5.0:
+                s.error_rate = round(max(0.0, min(10.0, s.error_rate + random.uniform(-0.03, 0.03))), 2)
+            s.request_volume = max(10, int(s.request_volume + random.randint(-40, 40)))
+
+            new_health, _ = evaluate_service_health(
+                cpu_usage=s.cpu_usage,
+                memory_usage=s.memory_usage,
+                latency_ms=s.latency_ms,
+                error_rate=s.error_rate
+            )
+            s.health_status = new_health
+
+        s.updated_at = now
+
+    db.commit()
+
+    try:
+        from app.database.dashboard_repository import DashboardRepository
+        DashboardRepository.record_activity(db, {
+            "event_type": "TELEMETRY_REFRESH",
+            "source_module": "module_1",
+            "description": f"Telemetry refresh executed across {len(services)} digital twin services.",
+            "metadata": {"refreshed_count": len(services), "timestamp": now.isoformat()}
+        })
+        db.commit()
+    except Exception:
+        pass
+
+    return get_metrics_summary(db=db)

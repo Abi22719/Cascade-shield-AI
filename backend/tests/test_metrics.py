@@ -42,6 +42,15 @@ def test_metrics_summary_with_degraded_services(client):
     # 7 * 100 + 1 * 50 = 750 / 9 = 83.3%
     assert 80.0 <= data["health_score_pct"] <= 85.0
 
+def test_metrics_refresh_endpoint(client):
+    """Verify POST /api/metrics/refresh updates telemetry timestamps and returns summary."""
+    res = client.post("/api/metrics/refresh?jitter=true")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["total_services"] == 9
+    assert data["telemetry_type"] == "simulated"
+    assert "health_score_pct" in data
+
 def test_sqlite_data_persistence():
     """
     Verify data persists after closing and reopening database connection.

@@ -18,6 +18,11 @@ export default function SimulationGraph({
 }) {
   const containerRef = useRef(null);
   const cyRef = useRef(null);
+  const onSelectServiceRef = useRef(onSelectService);
+
+  useEffect(() => {
+    onSelectServiceRef.current = onSelectService;
+  }, [onSelectService]);
 
   // Initialize Cytoscape Instance
   useEffect(() => {
@@ -26,7 +31,6 @@ export default function SimulationGraph({
     const cy = cytoscape({
       container: containerRef.current,
       boxSelectionEnabled: false,
-      wheelSensitivity: 0.25,
       style: [
         {
           selector: 'node',
@@ -126,8 +130,8 @@ export default function SimulationGraph({
 
     cy.on('tap', 'node', (evt) => {
       const node = evt.target;
-      if (onSelectService) {
-        onSelectService(node.id());
+      if (onSelectServiceRef.current) {
+        onSelectServiceRef.current(node.id());
       }
     });
 
@@ -135,8 +139,9 @@ export default function SimulationGraph({
 
     return () => {
       cy.destroy();
+      cyRef.current = null;
     };
-  }, [onSelectService]);
+  }, []);
 
   // Update Elements & Layout when topologyGraph changes
   useEffect(() => {

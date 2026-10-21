@@ -86,28 +86,30 @@ class NotificationService:
         # 1. Alerts
         alerts = db.query(AlertModel).order_by(desc(AlertModel.created_at)).limit(10).all()
         for a in alerts:
+            msg = a.evidence_summary or f"Metric {a.metric_name} breached threshold with value {a.observed_value if a.observed_value is not None else 'N/A'}."
             DashboardRepository.create_notification(db, {
                 "event_type": "ANOMALY_ALERT",
                 "source_module": "module_2",
                 "source_record_id": a.id,
                 "title": f"Anomaly Alert: {a.metric_name} on {a.service_id}",
-                "message": a.message or f"Metric {a.metric_name} breached threshold with value {a.current_value:.1f}.",
-                "severity": a.severity,
-                "read_status": a.is_resolved
+                "message": msg,
+                "severity": a.severity or "WARNING",
+                "read_status": bool(a.acknowledged)
             })
             count += 1
 
         # 2. RCA Incidents
         incidents = db.query(RCAIncidentModel).order_by(desc(RCAIncidentModel.created_at)).limit(5).all()
         for inc in incidents:
+            target = inc.target_service_id or "system"
             DashboardRepository.create_notification(db, {
                 "event_type": "RCA_INCIDENT",
                 "source_module": "module_4",
                 "source_record_id": inc.id,
-                "title": f"RCA Incident Investigated: {inc.name}",
-                "message": f"Root Cause Analysis completed for incident on service '{inc.service_id}' with status {inc.status}.",
-                "severity": inc.severity or "WARNING",
-                "read_status": inc.status != "OPEN"
+                "title": f"RCA Incident Investigated: {inc.title}",
+                "message": f"Root Cause Analysis completed for incident on service '{target}' with status {inc.status}.",
+                "severity": "CRITICAL" if inc.status == "investigating" else "WARNING",
+                "read_status": inc.status == "completed"
             })
             count += 1
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import Navbar from './components/Navbar';
+import Sidebar from './components/Sidebar';
+import TopHeader from './components/TopHeader';
 import MetricsSummaryBar from './components/MetricsSummaryBar';
 import FilterBar from './components/FilterBar';
 import GraphViewer from './components/GraphViewer';
@@ -33,6 +34,23 @@ export default function App() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem('cs_sidebar_collapsed') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const toggleSidebar = useCallback(() => {
+    setSidebarCollapsed(prev => {
+      const next = !prev;
+      try {
+        localStorage.setItem('cs_sidebar_collapsed', String(next));
+      } catch {}
+      return next;
+    });
+  }, []);
 
   const [graphData, setGraphData] = useState({ nodes: [], edges: [], summary: {}, cycles: [] });
   const [metricsSummary, setMetricsSummary] = useState(null);
@@ -105,6 +123,33 @@ export default function App() {
   useEffect(() => {
     loadDigitalTwin();
   }, [loadDigitalTwin]);
+
+  // Global Refresh Handler (Navbar Refresh Button across all 10 modules)
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleGlobalRefresh = useCallback(async () => {
+    setLoading(true);
+    try {
+      // 1. Advance live telemetry with realistic operational jitter
+      await api.refreshTelemetry(true).catch(err => {
+        console.warn('Backend telemetry refresh call fallback:', err);
+      });
+
+      // 2. Fetch fresh digital twin graph, services, and aggregate metrics
+      await loadDigitalTwin();
+
+      // 3. Increment refresh counter and dispatch refresh event for active module
+      setRefreshKey(prev => prev + 1);
+      window.dispatchEvent(new CustomEvent('cascadeshield:refresh', { detail: { activeModule } }));
+
+      addToast('Digital twin telemetry and active module view refreshed.', 'success', 'Refreshed');
+    } catch (err) {
+      console.error('Error refreshing platform state:', err);
+      addToast(err.message || 'Failed to refresh state', 'error', 'Refresh Error');
+    } finally {
+      setLoading(false);
+    }
+  }, [loadDigitalTwin, addToast, activeModule]);
 
   // Global Ctrl+K shortcut and notifications counter
   useEffect(() => {
@@ -284,135 +329,152 @@ export default function App() {
   }).length || 0;
 
   return (
-    <div className="app-container">
-      {/* Header */}
-      <Navbar
+    <div className="enterprise-layout">
+      {/* Left Navigation Sidebar */}
+      <Sidebar
         activeModule={activeModule}
         onSelectModule={setActiveModule}
+        collapsed={sidebarCollapsed}
+        onToggleCollapse={toggleSidebar}
         unacknowledgedAlertsCount={unacknowledgedCount}
-        unreadNotificationCount={unreadNotificationCount}
-        onOpenSearch={() => setIsSearchOpen(true)}
-        onOpenNotifications={() => setIsNotificationsOpen(true)}
-        onAddService={() => setIsAddServiceOpen(true)}
-        onAddDependency={() => setIsAddDependencyOpen(true)}
-        onResetTopology={handleResetTopologyConfirm}
-        onRefresh={activeModule === 'digital-twin' ? loadDigitalTwin : undefined}
-        loading={loading}
       />
 
-      {/* MODULE 1 VIEW: DIGITAL TWIN & DEPENDENCY GRAPH */}
-      {activeModule === 'digital-twin' && (
-        <>
-          {/* Metrics Summary Top Bar */}
-          <MetricsSummaryBar summary={metricsSummary} />
-
-          {/* Toolbar / Search / Filters */}
-          <FilterBar
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            selectedType={filterType}
-            onTypeChange={setFilterType}
-            selectedHealth={filterHealth}
-            onHealthChange={setFilterHealth}
-            currentLayout={currentLayout}
-            onLayoutChange={setCurrentLayout}
-            impactActive={Boolean(impactData)}
-            onClearImpact={handleClearImpact}
-            matchingCount={matchingNodesCount}
-            totalCount={graphData.nodes?.length || 0}
-          />
-
-          {/* Main Digital Twin Canvas + Side Drawer */}
-          <main className="main-workspace">
-            <GraphViewer
-              graphData={graphData}
-              selectedNodeId={selectedNode?.id}
-              selectedEdgeId={selectedEdge?.id}
-              onSelectNode={handleSelectNode}
-              onSelectEdge={handleSelectEdge}
-              onClearSelection={handleClearSelection}
-              searchQuery={searchQuery}
-              filterType={filterType}
-              filterHealth={filterHealth}
-              layoutName={currentLayout}
-              impactData={impactData}
-            />
-
-            {/* Side Panel Inspector */}
-            <ServiceDrawer
-              selectedNode={selectedNode}
-              selectedEdge={selectedEdge}
-              onClose={handleClearSelection}
-              onUpdateService={handleUpdateService}
-              onDeleteService={handleDeleteServiceConfirm}
-              onDeleteDependency={handleDeleteDependencyConfirm}
-              onAnalyzeImpact={handleAnalyzeImpact}
-              impactData={impactData}
-              onClearImpact={handleClearImpact}
-            />
-          </main>
-        </>
-      )}
-
-      {/* MODULE 2 VIEW: AI ANOMALY DETECTION & EARLY WARNING */}
-      {activeModule === 'anomaly-detection' && (
-        <AnomalyDashboard onAddToast={addToast} />
-      )}
-
-      {/* MODULE 3 VIEW: CASCADING FAILURE PREDICTION ENGINE */}
-      {activeModule === 'cascade-prediction' && (
-        <CascadePredictionDashboard onAddToast={addToast} />
-      )}
-
-      {/* MODULE 4 VIEW: EVIDENCE-GROUNDED ROOT CAUSE ANALYSIS (RCA) */}
-      {activeModule === 'root-cause-analysis' && (
-        <RCADashboard onAddToast={addToast} />
-      )}
-
-      {/* MODULE 5 VIEW: ADAPTIVE AI DIAGNOSTIC AGENT */}
-      {activeModule === 'diagnostic-agent' && (
-        <DiagnosticAgentDashboard onAddToast={addToast} />
-      )}
-
-      {/* MODULE 6 VIEW: WHAT-IF SCENARIO SIMULATION ENGINE */}
-      {activeModule === 'what-if-simulation' && (
-        <SimulationDashboard onAddToast={addToast} />
-      )}
-
-      {/* MODULE 7 VIEW: INTELLIGENT RECOVERY PLANNING & RISK ASSESSMENT */}
-      {activeModule === 'recovery-planning' && (
-        <RecoveryDashboard onAddToast={addToast} />
-      )}
-
-      {/* MODULE 8 VIEW: AUTOMATED RECOVERY VALIDATION & VERIFICATION */}
-      {activeModule === 'recovery-validation' && (
-        <RecoveryValidationDashboard onAddToast={addToast} />
-      )}
-
-      {/* MODULE 9 VIEW: RESILIENCE BENCHMARKING & PERFORMANCE EVALUATION */}
-      {activeModule === 'resilience-benchmark' && (
-        <BenchmarkDashboard onAddToast={addToast} />
-      )}
-
-      {/* MODULE 10 VIEW: UNIFIED EXECUTIVE DASHBOARD & AI INSIGHTS */}
-      {activeModule === 'unified-dashboard' && (
-        <UnifiedDashboard 
-          onNavigateModule={setActiveModule} 
-          onOpenSearch={() => setIsSearchOpen(true)} 
+      {/* Main Content Viewport */}
+      <div className="enterprise-main">
+        {/* Executive Top Header */}
+        <TopHeader
+          activeModule={activeModule}
+          sidebarCollapsed={sidebarCollapsed}
+          onToggleSidebar={toggleSidebar}
+          onOpenSearch={() => setIsSearchOpen(true)}
+          onOpenNotifications={() => setIsNotificationsOpen(true)}
+          unreadNotificationCount={unreadNotificationCount}
+          onRefresh={handleGlobalRefresh}
+          loading={loading}
+          onAddService={() => setIsAddServiceOpen(true)}
+          onAddDependency={() => setIsAddDependencyOpen(true)}
+          onResetTopology={handleResetTopologyConfirm}
         />
-      )}
 
-      {/* MODULE 10 VIEW: 10-STEP GUIDED INCIDENT INVESTIGATION WORKFLOW */}
-      {activeModule === 'incident-workflow' && (
-        <IncidentWorkflowPage 
-          onNavigateModule={setActiveModule} 
-        />
-      )}
+        {/* Scrollable Content Area */}
+        <div className="enterprise-content">
+          {/* MODULE 1 VIEW: DIGITAL TWIN & DEPENDENCY GRAPH */}
+          {activeModule === 'digital-twin' && (
+            <>
+              {/* Metrics Summary Top Bar */}
+              <MetricsSummaryBar summary={metricsSummary} />
 
-      {/* MODULE 10 VIEW: UNIFIED REPORTS CENTER */}
-      {activeModule === 'reports-center' && (
-        <ReportsPage />
-      )}
+              {/* Toolbar / Search / Filters */}
+              <FilterBar
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                selectedType={filterType}
+                onTypeChange={setFilterType}
+                selectedHealth={filterHealth}
+                onHealthChange={setFilterHealth}
+                currentLayout={currentLayout}
+                onLayoutChange={setCurrentLayout}
+                impactActive={Boolean(impactData)}
+                onClearImpact={handleClearImpact}
+                matchingCount={matchingNodesCount}
+                totalCount={graphData.nodes?.length || 0}
+              />
+
+              {/* Main Digital Twin Canvas + Side Drawer */}
+              <main className="main-workspace">
+                <GraphViewer
+                  graphData={graphData}
+                  selectedNodeId={selectedNode?.id}
+                  selectedEdgeId={selectedEdge?.id}
+                  onSelectNode={handleSelectNode}
+                  onSelectEdge={handleSelectEdge}
+                  onClearSelection={handleClearSelection}
+                  searchQuery={searchQuery}
+                  filterType={filterType}
+                  filterHealth={filterHealth}
+                  layoutName={currentLayout}
+                  impactData={impactData}
+                />
+
+                {/* Side Panel Inspector */}
+                <ServiceDrawer
+                  selectedNode={selectedNode}
+                  selectedEdge={selectedEdge}
+                  onClose={handleClearSelection}
+                  onUpdateService={handleUpdateService}
+                  onDeleteService={handleDeleteServiceConfirm}
+                  onDeleteDependency={handleDeleteDependencyConfirm}
+                  onAnalyzeImpact={handleAnalyzeImpact}
+                  impactData={impactData}
+                  onClearImpact={handleClearImpact}
+                />
+              </main>
+            </>
+          )}
+
+          {/* MODULE 2 VIEW: AI ANOMALY DETECTION & EARLY WARNING */}
+          {activeModule === 'anomaly-detection' && (
+            <AnomalyDashboard key={`anomaly-${refreshKey}`} onAddToast={addToast} />
+          )}
+
+          {/* MODULE 3 VIEW: CASCADING FAILURE PREDICTION ENGINE */}
+          {activeModule === 'cascade-prediction' && (
+            <CascadePredictionDashboard key={`cascade-${refreshKey}`} onAddToast={addToast} />
+          )}
+
+          {/* MODULE 4 VIEW: EVIDENCE-GROUNDED ROOT CAUSE ANALYSIS (RCA) */}
+          {activeModule === 'root-cause-analysis' && (
+            <RCADashboard key={`rca-${refreshKey}`} onAddToast={addToast} />
+          )}
+
+          {/* MODULE 5 VIEW: ADAPTIVE AI DIAGNOSTIC AGENT */}
+          {activeModule === 'diagnostic-agent' && (
+            <DiagnosticAgentDashboard key={`agent-${refreshKey}`} onAddToast={addToast} />
+          )}
+
+          {/* MODULE 6 VIEW: WHAT-IF SCENARIO SIMULATION ENGINE */}
+          {activeModule === 'what-if-simulation' && (
+            <SimulationDashboard key={`simulation-${refreshKey}`} onAddToast={addToast} />
+          )}
+
+          {/* MODULE 7 VIEW: INTELLIGENT RECOVERY PLANNING & RISK ASSESSMENT */}
+          {activeModule === 'recovery-planning' && (
+            <RecoveryDashboard key={`recovery-${refreshKey}`} onAddToast={addToast} />
+          )}
+
+          {/* MODULE 8 VIEW: AUTOMATED RECOVERY VALIDATION & VERIFICATION */}
+          {activeModule === 'recovery-validation' && (
+            <RecoveryValidationDashboard key={`validation-${refreshKey}`} onAddToast={addToast} />
+          )}
+
+          {/* MODULE 9 VIEW: RESILIENCE BENCHMARKING & PERFORMANCE EVALUATION */}
+          {activeModule === 'resilience-benchmark' && (
+            <BenchmarkDashboard key={`benchmark-${refreshKey}`} onAddToast={addToast} />
+          )}
+
+          {/* MODULE 10 VIEW: UNIFIED EXECUTIVE DASHBOARD & AI INSIGHTS */}
+          {activeModule === 'unified-dashboard' && (
+            <UnifiedDashboard 
+              key={`unified-${refreshKey}`}
+              onNavigateModule={setActiveModule} 
+              onOpenSearch={() => setIsSearchOpen(true)} 
+            />
+          )}
+
+          {/* MODULE 10 VIEW: 10-STEP GUIDED INCIDENT INVESTIGATION WORKFLOW */}
+          {activeModule === 'incident-workflow' && (
+            <IncidentWorkflowPage 
+              key={`workflow-${refreshKey}`}
+              onNavigateModule={setActiveModule} 
+            />
+          )}
+
+          {/* MODULE 10 VIEW: UNIFIED REPORTS CENTER */}
+          {activeModule === 'reports-center' && (
+            <ReportsPage key={`reports-${refreshKey}`} />
+          )}
+        </div>
+      </div>
 
       {/* Modals */}
       <ServiceModal

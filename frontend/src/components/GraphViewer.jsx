@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import cytoscape from 'cytoscape';
 import dagre from 'cytoscape-dagre';
 import { 
@@ -8,11 +8,15 @@ import {
   RotateCcw, 
   AlertTriangle,
   Play,
-  Crosshair
+  Crosshair,
+  Loader2
 } from 'lucide-react';
 
-// Register dagre layout
-cytoscape.use(dagre);
+// Register dagre layout once
+if (!cytoscape.prototype._dagreRegistered) {
+  cytoscape.use(dagre);
+  cytoscape.prototype._dagreRegistered = true;
+}
 
 export default function GraphViewer({
   graphData,
@@ -30,8 +34,78 @@ export default function GraphViewer({
   const containerRef = useRef(null);
   const cyRef = useRef(null);
   const [highlightedCycle, setHighlightedCycle] = useState(null);
+  const [isRendered, setIsRendered] = useState(false);
 
-  // Initialize Cytoscape Instance
+  // Helper to run layout reliably with viewport fitting
+  const runLayout = useCallback((layoutType = layoutName) => {
+    const cy = cyRef.current;
+    if (!cy || cy.elements().length === 0) return;
+
+    cy.resize();
+
+    let layoutConfig = {
+      animate: true,
+      animationDuration: 350,
+      fit: true,
+      padding: 60
+    };
+
+    if (layoutType === 'dagre-lr') {
+      layoutConfig = {
+        name: 'dagre',
+        rankDir: 'LR',
+        nodeSep: 60,
+        rankSep: 110,
+        ...layoutConfig
+      };
+    } else if (layoutType === 'dagre-tb') {
+      layoutConfig = {
+        name: 'dagre',
+        rankDir: 'TB',
+        nodeSep: 60,
+        rankSep: 90,
+        ...layoutConfig
+      };
+    } else if (layoutType === 'breadthfirst') {
+      layoutConfig = {
+        name: 'breadthfirst',
+        directed: true,
+        spacingFactor: 1.4,
+        ...layoutConfig
+      };
+    } else if (layoutType === 'cose') {
+      layoutConfig = {
+        name: 'cose',
+        idealEdgeLength: 120,
+        nodeOverlap: 20,
+        ...layoutConfig
+      };
+    } else {
+      layoutConfig = {
+        name: 'circle',
+        ...layoutConfig
+      };
+    }
+
+    try {
+      const layout = cy.layout(layoutConfig);
+      layout.one('layoutstop', () => {
+        cy.resize();
+        cy.fit(undefined, 60);
+      });
+      layout.run();
+    } catch (err) {
+      console.warn('Layout execution failed, using fallback:', err);
+      const fallback = cy.layout({ name: 'breadthfirst', directed: true, padding: 50, fit: true });
+      fallback.one('layoutstop', () => {
+        cy.resize();
+        cy.fit(undefined, 50);
+      });
+      fallback.run();
+    }
+  }, [layoutName]);
+
+  // 1. Initialize Cytoscape Instance
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -39,7 +113,8 @@ export default function GraphViewer({
       container: containerRef.current,
       boxSelectionEnabled: false,
       autounselectify: false,
-      wheelSensitivity: 0.25,
+      minZoom: 0.2,
+      maxZoom: 3.0,
       style: [
         // Default Node Style
         {
@@ -54,8 +129,8 @@ export default function GraphViewer({
             'text-halign': 'center',
             'text-wrap': 'wrap',
             'text-max-width': '100px',
-            'width': 120,
-            'height': 56,
+            'width': 130,
+            'height': 58,
             'shape': 'round-rectangle',
             'background-color': '#141e33',
             'border-width': 2,
@@ -73,9 +148,10 @@ export default function GraphViewer({
             'border-color': '#10b981',
             'border-width': 2.5,
             'background-color': '#0f2427',
-            'shadow-blur': 12,
-            'shadow-color': 'rgba(16, 185, 129, 0.3)',
-            'shadow-opacity': 0.8
+            'underlay-color': '#10b981',
+            'underlay-padding': 3,
+            'underlay-opacity': 0.25,
+            'underlay-shape': 'round-rectangle'
           }
         },
         // Health: WARNING
@@ -85,9 +161,10 @@ export default function GraphViewer({
             'border-color': '#f59e0b',
             'border-width': 3,
             'background-color': '#2a2012',
-            'shadow-blur': 16,
-            'shadow-color': 'rgba(245, 158, 11, 0.5)',
-            'shadow-opacity': 0.9
+            'underlay-color': '#f59e0b',
+            'underlay-padding': 4,
+            'underlay-opacity': 0.35,
+            'underlay-shape': 'round-rectangle'
           }
         },
         // Health: CRITICAL
@@ -97,9 +174,10 @@ export default function GraphViewer({
             'border-color': '#ef4444',
             'border-width': 3.5,
             'background-color': '#2d1418',
-            'shadow-blur': 22,
-            'shadow-color': 'rgba(239, 68, 68, 0.7)',
-            'shadow-opacity': 1.0
+            'underlay-color': '#ef4444',
+            'underlay-padding': 6,
+            'underlay-opacity': 0.5,
+            'underlay-shape': 'round-rectangle'
           }
         },
         // Selected Node
@@ -109,9 +187,10 @@ export default function GraphViewer({
             'border-color': '#38bdf8',
             'border-width': 4,
             'border-style': 'solid',
-            'shadow-blur': 26,
-            'shadow-color': '#0ea5e9',
-            'shadow-opacity': 1.0
+            'underlay-color': '#0ea5e9',
+            'underlay-padding': 5,
+            'underlay-opacity': 0.5,
+            'underlay-shape': 'round-rectangle'
           }
         },
         // Downstream Impacted Node
@@ -121,9 +200,10 @@ export default function GraphViewer({
             'border-color': '#f43f5e',
             'border-width': 3.5,
             'border-style': 'double',
-            'shadow-blur': 20,
-            'shadow-color': '#f43f5e',
-            'shadow-opacity': 0.85
+            'underlay-color': '#f43f5e',
+            'underlay-padding': 5,
+            'underlay-opacity': 0.45,
+            'underlay-shape': 'round-rectangle'
           }
         },
         // Root Service in Impact Analysis
@@ -132,9 +212,10 @@ export default function GraphViewer({
           style: {
             'border-color': '#a855f7',
             'border-width': 4,
-            'shadow-blur': 24,
-            'shadow-color': '#a855f7',
-            'shadow-opacity': 1.0
+            'underlay-color': '#a855f7',
+            'underlay-padding': 6,
+            'underlay-opacity': 0.55,
+            'underlay-shape': 'round-rectangle'
           }
         },
         // Filter Dimmed
@@ -150,9 +231,10 @@ export default function GraphViewer({
           style: {
             'border-color': '#fbbf24',
             'border-width': 4,
-            'shadow-blur': 24,
-            'shadow-color': '#fbbf24',
-            'shadow-opacity': 1
+            'underlay-color': '#fbbf24',
+            'underlay-padding': 5,
+            'underlay-opacity': 0.5,
+            'underlay-shape': 'round-rectangle'
           }
         },
         // Cycle Node Highlight
@@ -266,12 +348,33 @@ export default function GraphViewer({
 
     cyRef.current = cy;
 
+    // ResizeObserver to handle container layout changes, tab switches, and window resizes
+    let resizeTimer = null;
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
+          clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(() => {
+            if (cy && !cy.destroyed() && cy.elements().length > 0) {
+              cy.resize();
+              cy.fit(undefined, 60);
+            }
+          }, 80);
+        }
+      }
+    });
+
+    resizeObserver.observe(containerRef.current);
+
     return () => {
+      clearTimeout(resizeTimer);
+      resizeObserver.disconnect();
       cy.destroy();
+      cyRef.current = null;
     };
   }, []);
 
-  // Update elements when graphData changes
+  // 2. Update elements when graphData changes
   useEffect(() => {
     const cy = cyRef.current;
     if (!cy || !graphData) return;
@@ -287,70 +390,27 @@ export default function GraphViewer({
       }
     });
 
-    runCurrentLayout();
-  }, [graphData]);
-
-  // Run layout
-  const runCurrentLayout = () => {
-    const cy = cyRef.current;
-    if (!cy || cy.elements().length === 0) return;
-
-    let layoutConfig = {
-      animate: true,
-      animationDuration: 400,
-      padding: 50
-    };
-
-    if (layoutName === 'dagre-lr') {
-      layoutConfig = {
-        name: 'dagre',
-        rankDir: 'LR',
-        nodeSep: 60,
-        rankSep: 100,
-        ...layoutConfig
-      };
-    } else if (layoutName === 'dagre-tb') {
-      layoutConfig = {
-        name: 'dagre',
-        rankDir: 'TB',
-        nodeSep: 60,
-        rankSep: 80,
-        ...layoutConfig
-      };
-    } else if (layoutName === 'breadthfirst') {
-      layoutConfig = {
-        name: 'breadthfirst',
-        directed: true,
-        spacingFactor: 1.5,
-        ...layoutConfig
-      };
-    } else if (layoutName === 'cose') {
-      layoutConfig = {
-        name: 'cose',
-        idealEdgeLength: 120,
-        nodeOverlap: 20,
-        ...layoutConfig
-      };
+    if (graphData.nodes && graphData.nodes.length > 0) {
+      setIsRendered(true);
+      // Defer layout until container DOM measurement is ready
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          if (cy && !cy.destroyed() && cy.elements().length > 0) {
+            runLayout();
+          }
+        }, 50);
+      });
     } else {
-      layoutConfig = {
-        name: 'circle',
-        ...layoutConfig
-      };
+      setIsRendered(false);
     }
+  }, [graphData, runLayout]);
 
-    try {
-      cy.layout(layoutConfig).run();
-    } catch {
-      cy.layout({ name: 'breadthfirst', directed: true, padding: 40 }).run();
-    }
-  };
-
-  // Re-run layout when layoutName changes
+  // 3. Re-run layout when layoutName changes
   useEffect(() => {
-    runCurrentLayout();
-  }, [layoutName]);
+    runLayout(layoutName);
+  }, [layoutName, runLayout]);
 
-  // Handle Filtering & Search
+  // 4. Handle Filtering & Search
   useEffect(() => {
     const cy = cyRef.current;
     if (!cy) return;
@@ -366,8 +426,8 @@ export default function GraphViewer({
           const matchType = !filterType || data.service_type === filterType;
           const matchHealth = !filterHealth || data.health_status === filterHealth;
           const matchSearch = !searchQuery || 
-            data.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-            data.id.toLowerCase().includes(searchQuery.toLowerCase());
+            (data.name && data.name.toLowerCase().includes(searchQuery.toLowerCase())) || 
+            (data.id && data.id.toLowerCase().includes(searchQuery.toLowerCase()));
 
           if (matchType && matchHealth && matchSearch) {
             if (searchQuery && matchSearch) {
@@ -391,7 +451,7 @@ export default function GraphViewer({
 
     // If there is an exact search match, center on it
     if (searchQuery && cy) {
-      const match = cy.nodes(`.search-match`).first();
+      const match = cy.nodes('.search-match').first();
       if (match && match.length > 0) {
         cy.animate({
           center: { eles: match },
@@ -402,7 +462,7 @@ export default function GraphViewer({
     }
   }, [filterType, filterHealth, searchQuery]);
 
-  // Handle Selection Highlighting
+  // 5. Handle Selection Highlighting
   useEffect(() => {
     const cy = cyRef.current;
     if (!cy) return;
@@ -426,7 +486,7 @@ export default function GraphViewer({
     });
   }, [selectedNodeId, selectedEdgeId]);
 
-  // Handle Downstream Impact Highlighting
+  // 6. Handle Downstream Impact Highlighting
   useEffect(() => {
     const cy = cyRef.current;
     if (!cy) return;
@@ -494,17 +554,65 @@ export default function GraphViewer({
   };
 
   // Zoom / Fit Controls
-  const handleZoomIn = () => cyRef.current && cyRef.current.zoom(cyRef.current.zoom() * 1.25);
-  const handleZoomOut = () => cyRef.current && cyRef.current.zoom(cyRef.current.zoom() / 1.25);
-  const handleFit = () => cyRef.current && cyRef.current.fit(undefined, 50);
-  const handleCenter = () => cyRef.current && cyRef.current.center();
+  const handleZoomIn = () => {
+    if (cyRef.current) {
+      cyRef.current.zoom({
+        level: cyRef.current.zoom() * 1.3,
+        renderedPosition: { x: cyRef.current.width() / 2, y: cyRef.current.height() / 2 }
+      });
+    }
+  };
+
+  const handleZoomOut = () => {
+    if (cyRef.current) {
+      cyRef.current.zoom({
+        level: cyRef.current.zoom() / 1.3,
+        renderedPosition: { x: cyRef.current.width() / 2, y: cyRef.current.height() / 2 }
+      });
+    }
+  };
+
+  const handleFit = () => {
+    if (cyRef.current) {
+      cyRef.current.resize();
+      cyRef.current.fit(undefined, 60);
+    }
+  };
+
+  const handleCenter = () => {
+    if (cyRef.current) {
+      cyRef.current.center();
+    }
+  };
 
   const cycles = graphData?.cycles || [];
+  const hasNodes = graphData?.nodes && graphData.nodes.length > 0;
 
   return (
     <div className="cytoscape-container">
       {/* Cytoscape Canvas */}
       <div id="cy" ref={containerRef}></div>
+
+      {/* Loading / Empty State Indicator */}
+      {!hasNodes && (
+        <div style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '12px',
+          color: '#94a3b8',
+          zIndex: 5
+        }}>
+          <Loader2 size={32} className="animate-spin" color="#0ea5e9" />
+          <span style={{ fontSize: '0.9rem', fontWeight: 500 }}>
+            Loading Cloud Digital Twin Topology...
+          </span>
+        </div>
+      )}
 
       {/* Floating Canvas Controls */}
       <div className="graph-controls-overlay">
@@ -520,7 +628,7 @@ export default function GraphViewer({
         <button className="graph-control-btn" onClick={handleCenter} title="Center Graph">
           <Crosshair size={16} />
         </button>
-        <button className="graph-control-btn" onClick={runCurrentLayout} title="Re-run Layout">
+        <button className="graph-control-btn" onClick={() => runLayout(layoutName)} title="Re-run Layout">
           <Play size={16} />
         </button>
       </div>

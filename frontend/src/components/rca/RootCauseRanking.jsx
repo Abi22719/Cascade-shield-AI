@@ -53,10 +53,12 @@ export default function RootCauseRanking({
             return (
               <div
                 key={c.service_id}
-                className={`candidate-card ${c.rank === 1 ? 'top-rank' : ''}`}
+                className={`candidate-card ${c.rank === 1 ? 'top-rank' : ''} ${isSelected ? 'is-selected' : ''}`}
+                onClick={() => onSelectCandidate && onSelectCandidate(c.service_id)}
                 style={{
+                  cursor: 'pointer',
                   borderColor: isSelected ? '#8b5cf6' : undefined,
-                  boxShadow: isSelected ? '0 0 10px rgba(139, 92, 246, 0.25)' : undefined
+                  boxShadow: isSelected ? '0 0 14px rgba(139, 92, 246, 0.4)' : undefined
                 }}
               >
                 <div className="candidate-header">
@@ -80,7 +82,10 @@ export default function RootCauseRanking({
                       type="button"
                       className="timeline-btn"
                       style={{ padding: '4px' }}
-                      onClick={() => toggleExpand(c.service_id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleExpand(c.service_id);
+                      }}
                       title="Toggle Details"
                     >
                       {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}

@@ -283,7 +283,15 @@ def get_plan_results(plan_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail=f"Recovery Plan '{plan_id}' not found.")
     
     if not plan.runs:
-        raise HTTPException(status_code=404, detail=f"No simulation runs found for plan '{plan_id}'. Run simulation first.")
+        return {
+            "run_id": None,
+            "plan_id": plan.id,
+            "outcome": None,
+            "total_recovery_time": 0,
+            "maximum_risk": 0.0,
+            "final_health_summary": {},
+            "created_at": None
+        }
 
     latest = plan.runs[0]
     return {

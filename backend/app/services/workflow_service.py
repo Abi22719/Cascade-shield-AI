@@ -1,3 +1,4 @@
+import json
 from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional
 from sqlalchemy.orm import Session
@@ -74,7 +75,12 @@ class WorkflowService:
         if not cascade:
             cascade = db.query(CascadeScenarioModel).order_by(desc(CascadeScenarioModel.created_at)).first()
 
-        casc_res = json.loads(cascade.result_summary) if (cascade and cascade.result_summary) else {}
+        casc_res = {}
+        if cascade and cascade.result_summary:
+            try:
+                casc_res = json.loads(cascade.result_summary)
+            except Exception:
+                casc_res = {}
         impacted_cnt = len(casc_res.get("impacted_services", [])) or 2
         max_r = casc_res.get("max_risk_score", 75.0)
 
@@ -108,13 +114,16 @@ class WorkflowService:
 
         # 5. Step 5: Diagnostic Agent Session (Module 5)
         agent_session = db.query(AgentSessionModel).order_by(desc(AgentSessionModel.created_at)).first()
+        executed_steps = 0
+        if agent_session:
+            executed_steps = agent_session.total_steps or (len(agent_session.action_history) if agent_session.action_history else 0)
         s5 = WorkflowStepSchema(
             step_number=5,
             step_name="Diagnostic Agent Action Execution",
             module="Module 5: Adaptive Diagnostic Agent",
-            status="COMPLETED" if agent_session and agent_session.status == "STOPPED" else "IN_PROGRESS" if agent_session else "PENDING",
+            status="COMPLETED" if agent_session and agent_session.status in ["STOPPED", "COMPLETED"] else "IN_PROGRESS" if agent_session else "PENDING",
             record_id=agent_session.id if agent_session else None,
-            summary=f"Diagnostic session executed {agent_session.steps_executed} safe actions." if agent_session else "Agent session not yet initiated.",
+            summary=f"Diagnostic session executed {executed_steps} safe actions." if agent_session else "Agent session not yet initiated.",
             can_proceed=True,
             missing_prerequisites=[]
         )

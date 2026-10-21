@@ -122,4 +122,12 @@ export const api = {
     const res = await fetch(`${API_BASE}/metrics/summary`);
     return handleResponse(res);
   },
+
+  // Telemetry Refresh (Module 1 / Global Refresh)
+  async refreshTelemetry(jitter = true) {
+    const res = await fetch(`${API_BASE}/metrics/refresh?jitter=${jitter}`, {
+      method: 'POST',
+    });
+    return handleResponse(res);
+  },
 };

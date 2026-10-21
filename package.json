@@ -1,0 +1,13 @@
+{
+  "name": "cascade-shield-ai",
+  "version": "1.0.0",
+  "description": "CascadeShield AI is an intelligent, auditable, enterprise-grade cloud resilience platform providing virtual digital twin modeling, dependency mapping, AI-based anomaly detection, cascading failure blast radius simulation, evidence-grounded root cause analysis (RCA), adaptive diagnostic agents, what-if scenario simulations, intelligent recovery planning with risk assessment, automated recovery validation, and resilience benchmarking with repeatable failure evaluation across standard baselines.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}

@@ -34,31 +34,53 @@ const INCIDENT_PRESETS = [
     name: 'Payment Latency Storm',
     targetService: 'srv-payment',
     affectedServices: ['srv-order', 'srv-gateway'],
-    title: 'Payment Gateway Upstream Latency Storm'
+    title: 'Payment Gateway Upstream Latency Storm',
+    telemetry: {
+      'srv-payment': { latency_ms: 1250.0, error_rate: 12.5, cpu_usage: 88.0 },
+      'srv-database': { latency_ms: 35.0, error_rate: 0.1, cpu_usage: 28.0 },
+      'srv-auth': { latency_ms: 32.0, error_rate: 0.1, cpu_usage: 30.0 }
+    }
   },
   {
     name: 'Database Pool Exhaustion',
     targetService: 'srv-database',
     affectedServices: ['srv-order', 'srv-product', 'srv-gateway'],
-    title: 'Relational Database Connection Starvation'
+    title: 'Relational Database Connection Starvation',
+    telemetry: {
+      'srv-database': { latency_ms: 1450.0, error_rate: 14.8, cpu_usage: 94.5 },
+      'srv-payment': { latency_ms: 85.0, error_rate: 0.2, cpu_usage: 25.0 },
+      'srv-auth': { latency_ms: 32.0, error_rate: 0.1, cpu_usage: 30.0 }
+    }
   },
   {
     name: 'Auth Token Verification Outage',
     targetService: 'srv-auth',
     affectedServices: ['srv-user', 'srv-order', 'srv-gateway'],
-    title: 'OAuth/JWT Auth Verifier Outage'
+    title: 'OAuth/JWT Auth Verifier Outage',
+    telemetry: {
+      'srv-auth': { latency_ms: 980.0, error_rate: 22.0, cpu_usage: 92.0 },
+      'srv-database': { latency_ms: 35.0, error_rate: 0.1, cpu_usage: 28.0 },
+      'srv-payment': { latency_ms: 85.0, error_rate: 0.2, cpu_usage: 25.0 }
+    }
   },
   {
     name: 'Ambiguous / Insufficient Telemetry',
     targetService: 'srv-notify',
     affectedServices: [],
-    title: 'Uncorroborated Mild Telemetry Fluctuation'
+    title: 'Uncorroborated Mild Telemetry Fluctuation',
+    telemetry: {
+      'srv-notify': { latency_ms: 120.0, error_rate: 1.5, cpu_usage: 45.0 },
+      'srv-database': { latency_ms: 35.0, error_rate: 0.1, cpu_usage: 28.0 },
+      'srv-payment': { latency_ms: 85.0, error_rate: 0.2, cpu_usage: 25.0 },
+      'srv-auth': { latency_ms: 32.0, error_rate: 0.1, cpu_usage: 30.0 }
+    }
   }
 ];
 
 export default function RCADashboard({ onAddToast }) {
   const [services, setServices] = useState([]);
   const [graphData, setGraphData] = useState(null);
+  const [activePresetName, setActivePresetName] = useState('Payment Latency Storm');
 
   // Form inputs
   const [incidentTitle, setIncidentTitle] = useState('Payment Gateway Upstream Latency Storm');
@@ -155,10 +177,58 @@ export default function RCADashboard({ onAddToast }) {
   };
 
   // 3. Apply Quick Incident Preset
-  const handleApplyPreset = (preset) => {
+  const handleApplyPreset = async (preset) => {
+    setActivePresetName(preset.name);
     setIncidentTitle(preset.title);
     setTargetServiceId(preset.targetService);
     setAffectedServiceIds(preset.affectedServices);
+
+    try {
+      setLoading(true);
+      setError(null);
+      setStatusMessage(`Applying incident preset "${preset.name}" and correlating telemetry...`);
+
+      // Update simulated services in digital twin if telemetry is configured
+      if (preset.telemetry) {
+        await Promise.all(
+          Object.entries(preset.telemetry).map(([svcId, patch]) =>
+            api.updateService(svcId, patch).catch(e => console.warn('Could not patch service', svcId, e))
+          )
+        );
+      }
+
+      // Re-fetch services and graph so local state is fresh
+      const [servicesRes, graphRes] = await Promise.all([
+        api.getServices(),
+        api.getGraph()
+      ]);
+      setServices(servicesRes.items || servicesRes || []);
+      setGraphData(graphRes);
+
+      // Run root cause investigation for this preset
+      const payload = {
+        incident_title: preset.title,
+        target_service_id: preset.targetService,
+        affected_service_ids: preset.affectedServices,
+        include_alternatives: true,
+        include_recommendations: true
+      };
+
+      const result = await rcaApi.analyzeIncident(payload);
+      setReport(result);
+      if (result.primary_root_cause) {
+        setSelectedCandidateId(result.primary_root_cause.service_id);
+      }
+      setStatusMessage(`Analysis complete: Isolated "${result.primary_root_cause?.service_name || 'Inconclusive'}" with ${result.primary_root_cause?.confidence_label || 'Insufficient Evidence'}.`);
+      if (onAddToast) {
+        onAddToast(`RCA complete: ${result.primary_root_cause?.service_name || 'Inconclusive'}`, 'success', 'RCA Engine');
+      }
+    } catch (err) {
+      console.error('RCA preset execution failed:', err);
+      setError(err.message || 'Failed to analyze selected preset.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   // 4. Toggle Affected Service Checkbox
@@ -169,6 +239,10 @@ export default function RCADashboard({ onAddToast }) {
       setAffectedServiceIds([...affectedServiceIds, id]);
     }
   };
+
+  const handleSelectCandidate = useCallback((id) => {
+    setSelectedCandidateId(id);
+  }, []);
 
   const primaryRootCauseId = report?.primary_root_cause?.service_id || null;
   const candidateIds = report?.ranked_candidates?.map(c => c.service_id) || [];
@@ -237,7 +311,7 @@ export default function RCADashboard({ onAddToast }) {
           <button
             key={idx}
             type="button"
-            className="rca-preset-btn"
+            className={`rca-preset-btn ${activePresetName === p.name ? 'active' : ''}`}
             onClick={() => handleApplyPreset(p)}
           >
             {p.name}
@@ -335,7 +409,7 @@ export default function RCADashboard({ onAddToast }) {
         <RootCauseRanking
           candidates={report?.ranked_candidates || []}
           selectedCandidateId={selectedCandidateId}
-          onSelectCandidate={id => setSelectedCandidateId(id)}
+          onSelectCandidate={handleSelectCandidate}
         />
 
         {/* Column 3: Dependency Impact Graph */}
@@ -345,7 +419,7 @@ export default function RCADashboard({ onAddToast }) {
           candidateIds={candidateIds}
           affectedServiceIds={affectedServiceIds}
           selectedServiceId={selectedCandidateId}
-          onSelectService={id => setSelectedCandidateId(id)}
+          onSelectService={handleSelectCandidate}
         />
       </div>
 

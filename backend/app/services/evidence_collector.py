@@ -33,8 +33,22 @@ class EvidenceCollector:
         services = db.query(ServiceModel).all()
         service_map = {s.id: s for s in services}
 
+        # Determine services in incident scope (affected services + immediate topological neighbors)
+        scoped_service_ids: Set[str] = set(affected_service_ids)
+        if affected_service_ids:
+            deps = db.query(DependencyModel).filter(
+                (DependencyModel.source_service_id.in_(affected_service_ids)) |
+                (DependencyModel.target_service_id.in_(affected_service_ids))
+            ).all()
+            for d in deps:
+                scoped_service_ids.add(d.source_service_id)
+                scoped_service_ids.add(d.target_service_id)
+
         # 1. Module 1 Telemetry & Health Evidence
         for s in services:
+            if affected_service_ids and s.id not in scoped_service_ids:
+                continue
+
             # Check if service is in affected set or directly connected
             is_affected = s.id in affected_service_ids or len(affected_service_ids) == 0
             status_lower = (s.health_status or "healthy").lower()
@@ -127,13 +141,15 @@ class EvidenceCollector:
         alerts = alert_query.order_by(AlertModel.created_at.asc()).all()
 
         for a in alerts:
+            if affected_service_ids and a.service_id not in scoped_service_ids:
+                continue
             key = f"alert_{a.id}"
             if key not in seen_keys:
                 seen_keys.add(key)
                 is_crit = a.severity == "Critical"
                 evidence_items.append(
                     EvidenceItemSchema(
-                        id=f"ev-alt-{a.id}",
+                        id=f"ev-alt-{uuid.uuid4().hex[:8]}",
                         service_id=a.service_id,
                         service_name=a.service_name,
                         evidence_type="anomaly_alert",
@@ -161,7 +177,7 @@ class EvidenceCollector:
                     seen_keys.add(key)
                     evidence_items.append(
                         EvidenceItemSchema(
-                            id=f"ev-casc-{scenario.id}",
+                            id=f"ev-casc-{uuid.uuid4().hex[:8]}",
                             service_id=scenario.initial_service_id,
                             service_name=root_name,
                             evidence_type="cascade_risk",
