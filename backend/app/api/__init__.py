@@ -61,3 +61,19 @@ api_router.include_router(notification_router)
 api_router.include_router(report_router)
 api_router.include_router(workflow_router)
 
+# Enterprise Portals 1-8 routes
+from app.api.admin_routes import router as admin_router
+from app.api.incident_routes import router as incident_router
+from app.api.copilot_routes import router as copilot_router
+from app.api.developer_routes import router as developer_router
+from app.api.security_routes import router as security_router
+from app.api.knowledge_routes import router as knowledge_router
+
+api_router.include_router(admin_router)
+api_router.include_router(incident_router)
+api_router.include_router(copilot_router)
+api_router.include_router(developer_router)
+api_router.include_router(security_router)
+api_router.include_router(knowledge_router)
+
+

@@ -20,6 +20,14 @@ import BenchmarkDashboard from './pages/BenchmarkDashboard';
 import UnifiedDashboard from './pages/UnifiedDashboard';
 import IncidentWorkflowPage from './pages/IncidentWorkflowPage';
 import ReportsPage from './pages/ReportsPage';
+import CloudAdministratorPortal from './pages/CloudAdministratorPortal';
+import IncidentResponsePortal from './pages/IncidentResponsePortal';
+import AIResilienceCopilotPortal from './pages/AIResilienceCopilotPortal';
+import DigitalTwinSimulationPortal from './pages/DigitalTwinSimulationPortal';
+import ReliabilityAnalyticsPortal from './pages/ReliabilityAnalyticsPortal';
+import DeveloperPortal from './pages/DeveloperPortal';
+import SecurityAuditPortal from './pages/SecurityAuditPortal';
+import ReportsKnowledgePortal from './pages/ReportsKnowledgePortal';
 import GlobalSearchModal from './components/GlobalSearchModal';
 import NotificationModal from './components/NotificationModal';
 import ResilienceDrillModal from './components/ResilienceDrillModal';
@@ -30,12 +38,20 @@ import './styles/App.css';
 import './styles/dashboard.css';
 
 export default function App() {
-  const [activeModule, setActiveModule] = useState('unified-dashboard'); // 'unified-dashboard' | 'incident-workflow' | 'reports-center' | 'digital-twin' | 'anomaly-detection' | 'cascade-prediction' | 'root-cause-analysis' | 'diagnostic-agent' | 'what-if-simulation' | 'recovery-planning' | 'recovery-validation' | 'resilience-benchmark'
+  const [activeModule, setActiveModule] = useState('unified-dashboard'); // 'unified-dashboard' | 'incident-workflow' | 'reports-center' | 'digital-twin' | 'anomaly-detection' | 'cascade-prediction' | 'root-cause-analysis' | 'diagnostic-agent' | 'what-if-simulation' | 'recovery-planning' | 'recovery-validation' | 'resilience-benchmark' | 'portal-admin' | 'portal-incident' | 'portal-copilot' | 'portal-digital-twin' | 'portal-analytics' | 'portal-developer' | 'portal-security' | 'portal-reports'
   const [unacknowledgedCount, setUnacknowledgedCount] = useState(0);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isDrillModalOpen, setIsDrillModalOpen] = useState(false);
   const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
+
+  // Enterprise Role-Based Access User State
+  const [currentUser, setCurrentUser] = useState({
+    id: 'usr-admin-01',
+    username: 'admin',
+    email: 'admin@cascadeshield.internal',
+    role: 'Administrator'
+  });
 
   // Enterprise Theme System (Dark Navy / Clean Executive Light)
   const [theme, setTheme] = useState(() => {
@@ -384,6 +400,8 @@ export default function App() {
           onToggleTheme={toggleTheme}
           onOpenDrills={() => setIsDrillModalOpen(true)}
           resilienceScore={metricsSummary?.resilience_score || 89.4}
+          currentUser={currentUser}
+          onRoleChange={(newRole) => setCurrentUser(prev => ({ ...prev, role: newRole }))}
         />
 
         {/* Scrollable Content Area */}
@@ -503,6 +521,82 @@ export default function App() {
           {/* MODULE 10 VIEW: UNIFIED REPORTS CENTER */}
           {activeModule === 'reports-center' && (
             <ReportsPage key={`reports-${refreshKey}`} />
+          )}
+
+          {/* ========================================================================= */}
+          {/* 8 ADVANCED ENTERPRISE RESILIENCE PORTALS */}
+          {/* ========================================================================= */}
+
+          {/* PORTAL 1: CLOUD ADMINISTRATOR PORTAL */}
+          {activeModule === 'portal-admin' && (
+            <CloudAdministratorPortal 
+              key={`portal-admin-${refreshKey}`}
+              onNavigateModule={setActiveModule}
+              onAddToast={addToast}
+            />
+          )}
+
+          {/* PORTAL 2: INCIDENT RESPONSE PORTAL */}
+          {activeModule === 'portal-incident' && (
+            <IncidentResponsePortal 
+              key={`portal-incident-${refreshKey}`}
+              onNavigateModule={setActiveModule}
+              onAddToast={addToast}
+            />
+          )}
+
+          {/* PORTAL 3: AI RESILIENCE COPILOT PORTAL */}
+          {activeModule === 'portal-copilot' && (
+            <AIResilienceCopilotPortal 
+              key={`portal-copilot-${refreshKey}`}
+              onNavigateModule={setActiveModule}
+              onAddToast={addToast}
+            />
+          )}
+
+          {/* PORTAL 4: DIGITAL TWIN SIMULATION PORTAL */}
+          {activeModule === 'portal-digital-twin' && (
+            <DigitalTwinSimulationPortal 
+              key={`portal-digital-twin-${refreshKey}`}
+              onNavigateModule={setActiveModule}
+              onAddToast={addToast}
+            />
+          )}
+
+          {/* PORTAL 5: RELIABILITY ANALYTICS PORTAL */}
+          {activeModule === 'portal-analytics' && (
+            <ReliabilityAnalyticsPortal 
+              key={`portal-analytics-${refreshKey}`}
+              onNavigateModule={setActiveModule}
+              onAddToast={addToast}
+            />
+          )}
+
+          {/* PORTAL 6: DEVELOPER PORTAL */}
+          {activeModule === 'portal-developer' && (
+            <DeveloperPortal 
+              key={`portal-developer-${refreshKey}`}
+              onNavigateModule={setActiveModule}
+              onAddToast={addToast}
+            />
+          )}
+
+          {/* PORTAL 7: SECURITY AND AUDIT PORTAL */}
+          {activeModule === 'portal-security' && (
+            <SecurityAuditPortal 
+              key={`portal-security-${refreshKey}`}
+              onNavigateModule={setActiveModule}
+              onAddToast={addToast}
+            />
+          )}
+
+          {/* PORTAL 8: REPORTS AND KNOWLEDGE PORTAL */}
+          {activeModule === 'portal-reports' && (
+            <ReportsKnowledgePortal 
+              key={`portal-reports-${refreshKey}`}
+              onNavigateModule={setActiveModule}
+              onAddToast={addToast}
+            />
           )}
         </div>
       </div>

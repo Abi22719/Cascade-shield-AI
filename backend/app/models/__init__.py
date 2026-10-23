@@ -38,6 +38,8 @@ from app.models.dashboard_models import (
     ActivityEventModel,
     GeneratedReportModel
 )
+from app.models.security_models import UserModel, AuditLogModel
+from app.models.knowledge_models import KnowledgeArticleModel
 
 __all__ = [
     "ServiceModel", 
@@ -74,7 +76,10 @@ __all__ = [
     "BenchmarkConfigModel",
     "NotificationModel",
     "ActivityEventModel",
-    "GeneratedReportModel"
+    "GeneratedReportModel",
+    "UserModel",
+    "AuditLogModel",
+    "KnowledgeArticleModel"
 ]
 
 

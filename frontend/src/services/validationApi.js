@@ -1,4 +1,4 @@
-const API_BASE = 'http://127.0.0.1:8000/api/validation';
+const API_BASE = '/api/validation';
 
 async function request(endpoint, options = {}) {
   const url = `${API_BASE}${endpoint}`;

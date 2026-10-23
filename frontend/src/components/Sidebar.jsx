@@ -15,7 +15,14 @@ import {
   ChevronLeft,
   ChevronRight,
   Activity,
-  Layers
+  Layers,
+  Server,
+  ShieldAlert,
+  Sparkles,
+  TrendingUp,
+  Code,
+  Lock,
+  BookOpen
 } from 'lucide-react';
 
 export default function Sidebar({
@@ -27,7 +34,68 @@ export default function Sidebar({
 }) {
   const navSections = [
     {
-      title: 'Platform Overview',
+      title: 'Enterprise Portals (8)',
+      items: [
+        {
+          id: 'portal-admin',
+          label: 'Cloud Administrator',
+          moduleTag: 'Portal 1',
+          icon: Server,
+          description: 'Cloud infrastructure administration, service catalog, and platform settings'
+        },
+        {
+          id: 'portal-incident',
+          label: 'Incident Response',
+          moduleTag: 'Portal 2',
+          icon: ShieldAlert,
+          description: 'Incident triage war room, RCA suspect ranking, and activity audit timeline'
+        },
+        {
+          id: 'portal-copilot',
+          label: 'AI Resilience Copilot',
+          moduleTag: 'Portal 3',
+          icon: Sparkles,
+          description: 'Conversational assistant with evidence lineage and Bayesian reasoning'
+        },
+        {
+          id: 'portal-digital-twin',
+          label: 'Digital Twin Simulation',
+          moduleTag: 'Portal 4',
+          icon: FlaskConical,
+          description: 'Virtual cloud chaos injection, blast radius calculation, and step replay'
+        },
+        {
+          id: 'portal-analytics',
+          label: 'Reliability Analytics',
+          moduleTag: 'Portal 5',
+          icon: TrendingUp,
+          description: 'F1/precision metrics, RCA accuracy, MTTR, and 5-pillar verification scores'
+        },
+        {
+          id: 'portal-developer',
+          label: 'Developer Portal',
+          moduleTag: 'Portal 6',
+          icon: Code,
+          description: 'Subsystems health, M1–M10 schemas, interactive API Explorer, and SDKs'
+        },
+        {
+          id: 'portal-security',
+          label: 'Security and Audit',
+          moduleTag: 'Portal 7',
+          icon: Lock,
+          description: '6-tier RBAC user directory, permission matrix, and immutable audit logs'
+        },
+        {
+          id: 'portal-reports',
+          label: 'Reports & Knowledge',
+          moduleTag: 'Portal 8',
+          icon: BookOpen,
+          description: 'Post-mortem report archive, PDF export, and resilience knowledge base'
+        }
+      ]
+    },
+    {
+      title: 'Core Resilience Engines (M1–M10)',
       items: [
         {
           id: 'unified-dashboard',
@@ -37,17 +105,19 @@ export default function Sidebar({
           description: 'Executive cross-module health and AI insights'
         },
         {
+          id: 'incident-workflow',
+          label: 'Incident Workflow',
+          moduleTag: '10-Step',
+          icon: Route,
+          description: 'End-to-end guided incident lifecycle investigation'
+        },
+        {
           id: 'digital-twin',
           label: 'Digital Twin Map',
           moduleTag: 'M1',
           icon: Network,
           description: 'Virtual cloud infrastructure and directed topology graph'
-        }
-      ]
-    },
-    {
-      title: 'Detect & Predict',
-      items: [
+        },
         {
           id: 'anomaly-detection',
           label: 'Anomaly Detection',
@@ -62,12 +132,7 @@ export default function Sidebar({
           moduleTag: 'M3',
           icon: GitBranch,
           description: 'Reverse-propagation cascading failure blast radius simulation'
-        }
-      ]
-    },
-    {
-      title: 'Diagnostics & RCA',
-      items: [
+        },
         {
           id: 'root-cause-analysis',
           label: 'Root Cause (RCA)',
@@ -82,18 +147,6 @@ export default function Sidebar({
           icon: Bot,
           description: 'Adaptive diagnostic session and autonomous evidence collection'
         },
-        {
-          id: 'incident-workflow',
-          label: 'Incident Workflow',
-          moduleTag: '10-Step',
-          icon: Route,
-          description: 'End-to-end guided incident lifecycle investigation'
-        }
-      ]
-    },
-    {
-      title: 'Simulate & Validate',
-      items: [
         {
           id: 'what-if-simulation',
           label: 'What-If Simulation',
@@ -121,12 +174,7 @@ export default function Sidebar({
           moduleTag: 'M9',
           icon: Award,
           description: 'Quantitative resilience scoring against chaos baseline datasets'
-        }
-      ]
-    },
-    {
-      title: 'Audit & Governance',
-      items: [
+        },
         {
           id: 'reports-center',
           label: 'Reports Center',
