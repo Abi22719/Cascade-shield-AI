@@ -9,7 +9,11 @@ import {
   Menu,
   ShieldCheck,
   ChevronRight,
-  Sparkles
+  Sparkles,
+  Zap,
+  Sun,
+  Moon,
+  Activity
 } from 'lucide-react';
 
 export default function TopHeader({
@@ -23,7 +27,11 @@ export default function TopHeader({
   loading = false,
   onAddService,
   onAddDependency,
-  onResetTopology
+  onResetTopology,
+  theme = 'dark',
+  onToggleTheme,
+  onOpenDrills,
+  resilienceScore = 89.4
 }) {
   const getModuleMeta = () => {
     switch (activeModule) {
@@ -119,16 +127,17 @@ export default function TopHeader({
             className="topbar-mobile-menu-btn"
             onClick={onToggleSidebar}
             title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            aria-label="Toggle navigation sidebar"
           >
             <Menu size={18} />
           </button>
         )}
 
         <div className="topbar-breadcrumb-trail">
-          <span className="breadcrumb-root">CascadeShield</span>
+          <span className="breadcrumb-root">CascadeShield AI</span>
           <ChevronRight size={14} className="breadcrumb-separator" />
           <span className="breadcrumb-module-badge">{meta.moduleNum}</span>
-          <span className="breadcrumb-title">{meta.title}</span>
+          <span className="breadcrumb-title" title={meta.title}>{meta.title}</span>
         </div>
       </div>
 
@@ -147,14 +156,33 @@ export default function TopHeader({
         </button>
       </div>
 
-      {/* Right: Actions, Simulation Mode, Refresh, Notifications */}
+      {/* Right: Actions, Simulation Mode, Refresh, Theme Toggle, Notifications */}
       <div className="topbar-right-section">
-        <div className="simulated-pill" title="All telemetry data is dynamically simulated across microservices">
-          <span className="pulse-dot"></span>
-          <span>Simulation Mode</span>
+        {/* Resilience Posture Pill */}
+        <div 
+          className="resilience-posture-pill" 
+          title={`Overall Resilience Index: ${resilienceScore}/100. Multi-pillar health verified.`}
+        >
+          <span className="posture-icon-wrapper">
+            <ShieldCheck size={13} />
+          </span>
+          <span className="posture-score">{resilienceScore}%</span>
+          <span className="posture-label">Resilient</span>
         </div>
 
-        {/* Contextual Actions for Digital Twin */}
+        {/* Resilience Drill Trigger Button */}
+        {onOpenDrills && (
+          <button
+            className="btn btn-drill-trigger"
+            onClick={onOpenDrills}
+            title="Launch interactive cloud failure chaos drills"
+          >
+            <Zap size={14} className="drill-icon-pulse" />
+            <span className="drill-btn-text">Resilience Drill</span>
+          </button>
+        )}
+
+        {/* Digital Twin Context Actions */}
         {activeModule === 'digital-twin' && (
           <div className="topbar-context-actions">
             <button
@@ -197,11 +225,26 @@ export default function TopHeader({
           <span className="refresh-btn-label">Refresh</span>
         </button>
 
-        {/* Notifications Bell */}
+        {/* Light/Dark Theme Toggle Button */}
+        <button
+          className="topbar-icon-btn theme-toggle-btn"
+          onClick={onToggleTheme}
+          title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+          aria-label="Toggle Theme Mode"
+        >
+          {theme === 'dark' ? (
+            <Sun size={16} className="theme-icon sun-icon" />
+          ) : (
+            <Moon size={16} className="theme-icon moon-icon" />
+          )}
+        </button>
+
+        {/* Notifications Bell Button */}
         <button
           className="topbar-icon-btn notification-bell-btn"
           onClick={onOpenNotifications}
           title="System notifications and alerts"
+          aria-label="System notifications"
         >
           <Bell size={16} />
           {unreadNotificationCount > 0 && (

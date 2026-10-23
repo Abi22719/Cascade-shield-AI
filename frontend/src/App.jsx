@@ -22,6 +22,7 @@ import IncidentWorkflowPage from './pages/IncidentWorkflowPage';
 import ReportsPage from './pages/ReportsPage';
 import GlobalSearchModal from './components/GlobalSearchModal';
 import NotificationModal from './components/NotificationModal';
+import ResilienceDrillModal from './components/ResilienceDrillModal';
 import { api } from './services/api';
 import { anomalyApi } from './services/anomalyApi';
 import { dashboardApi } from './services/dashboardApi';
@@ -33,7 +34,28 @@ export default function App() {
   const [unacknowledgedCount, setUnacknowledgedCount] = useState(0);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [isDrillModalOpen, setIsDrillModalOpen] = useState(false);
   const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
+
+  // Enterprise Theme System (Dark Navy / Clean Executive Light)
+  const [theme, setTheme] = useState(() => {
+    try {
+      return localStorage.getItem('cs_theme') || 'dark';
+    } catch {
+      return 'dark';
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('cs_theme', theme);
+      document.documentElement.setAttribute('data-theme', theme);
+    } catch {}
+  }, [theme]);
+
+  const toggleTheme = useCallback(() => {
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+  }, []);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     try {
       return localStorage.getItem('cs_sidebar_collapsed') === 'true';
@@ -151,12 +173,16 @@ export default function App() {
     }
   }, [loadDigitalTwin, addToast, activeModule]);
 
-  // Global Ctrl+K shortcut and notifications counter
+  // Global Ctrl+K & Ctrl+D shortcuts and notifications counter
   useEffect(() => {
     const handleKeyDown = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
         setIsSearchOpen(prev => !prev);
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'd') {
+        e.preventDefault();
+        setIsDrillModalOpen(prev => !prev);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -329,7 +355,7 @@ export default function App() {
   }).length || 0;
 
   return (
-    <div className="enterprise-layout">
+    <div className="enterprise-layout" data-theme={theme}>
       {/* Left Navigation Sidebar */}
       <Sidebar
         activeModule={activeModule}
@@ -354,6 +380,10 @@ export default function App() {
           onAddService={() => setIsAddServiceOpen(true)}
           onAddDependency={() => setIsAddDependencyOpen(true)}
           onResetTopology={handleResetTopologyConfirm}
+          theme={theme}
+          onToggleTheme={toggleTheme}
+          onOpenDrills={() => setIsDrillModalOpen(true)}
+          resilienceScore={metricsSummary?.resilience_score || 89.4}
         />
 
         {/* Scrollable Content Area */}
@@ -457,7 +487,8 @@ export default function App() {
             <UnifiedDashboard 
               key={`unified-${refreshKey}`}
               onNavigateModule={setActiveModule} 
-              onOpenSearch={() => setIsSearchOpen(true)} 
+              onOpenSearch={() => setIsSearchOpen(true)}
+              onOpenDrills={() => setIsDrillModalOpen(true)}
             />
           )}
 
@@ -506,6 +537,15 @@ export default function App() {
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
         onNavigateModule={setActiveModule}
+      />
+
+      {/* Interactive Resilience Chaos Drill Modal */}
+      <ResilienceDrillModal
+        isOpen={isDrillModalOpen}
+        onClose={() => setIsDrillModalOpen(false)}
+        onNavigateModule={setActiveModule}
+        onAddToast={addToast}
+        onReloadTwin={loadDigitalTwin}
       />
 
       {/* Notifications Drawer Modal */}

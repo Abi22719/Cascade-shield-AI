@@ -8,14 +8,19 @@ import {
   Search, 
   ShieldCheck,
   Zap,
-  Layers
+  Layers,
+  Sparkles,
+  ArrowRight,
+  GitBranch,
+  Bot,
+  Activity
 } from 'lucide-react';
 import SystemSummaryCards from '../components/SystemSummaryCards';
 import ExplainabilityPanel from '../components/ExplainabilityPanel';
 import ActivityTimeline from '../components/ActivityTimeline';
 import { dashboardApi } from '../services/dashboardApi';
 
-export default function UnifiedDashboard({ onNavigateModule, onOpenSearch }) {
+export default function UnifiedDashboard({ onNavigateModule, onOpenSearch, onOpenDrills }) {
   const [summary, setSummary] = useState(null);
   const [insights, setInsights] = useState([]);
   const [activities, setActivities] = useState([]);
@@ -113,6 +118,58 @@ export default function UnifiedDashboard({ onNavigateModule, onOpenSearch }) {
           <strong>Error loading dashboard: </strong> {error}
         </div>
       )}
+
+      {/* Interactive Command Center Hero Banner */}
+      <div className="db-hero-banner">
+        <div className="hero-banner-content">
+          <div className="hero-badge">
+            <span className="pulse-dot"></span>
+            <span>Autonomous Cloud Resilience Twin • Multi-Tier Protection Active</span>
+          </div>
+          <h1 className="hero-title">
+            AI-Powered Cloud Resilience Digital Twin & Failure Prevention Agent
+          </h1>
+          <p className="hero-subtitle">
+            Continuous topological observability, multivariate anomaly detection, reverse-propagation blast radius simulation, evidence-grounded RCA, and isolated 5-pillar validation.
+          </p>
+          <div className="hero-actions-row">
+            {onOpenDrills && (
+              <button 
+                className="btn btn-drill-trigger"
+                onClick={onOpenDrills}
+                title="Launch 1-click failure chaos drill"
+              >
+                <Zap size={15} />
+                <span>Launch Resilience Drill</span>
+              </button>
+            )}
+
+            <button 
+              className="btn btn-secondary"
+              onClick={() => onNavigateModule('digital-twin')}
+            >
+              <Layers size={14} />
+              <span>Digital Twin Map</span>
+            </button>
+
+            <button 
+              className="btn btn-secondary"
+              onClick={() => onNavigateModule('diagnostic-agent')}
+            >
+              <Bot size={14} />
+              <span>Autonomous Agent</span>
+            </button>
+
+            <button 
+              className="btn btn-secondary"
+              onClick={() => onNavigateModule('incident-workflow')}
+            >
+              <Route size={14} />
+              <span>10-Step Workflow</span>
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* Cross-Module KPI Summary Cards */}
       <SystemSummaryCards 

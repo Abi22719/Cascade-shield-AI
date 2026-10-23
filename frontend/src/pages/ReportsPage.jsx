@@ -9,9 +9,14 @@ import {
   Table, 
   Calendar,
   Layers,
-  ExternalLink
+  ExternalLink,
+  Printer,
+  Copy,
+  Check
 } from 'lucide-react';
 import { dashboardApi } from '../services/dashboardApi';
+import SkeletonLoader from '../components/common/SkeletonLoader';
+import EmptyState from '../components/common/EmptyState';
 
 export default function ReportsPage() {
   const [reports, setReports] = useState([]);
@@ -21,6 +26,7 @@ export default function ReportsPage() {
   const [loading, setLoading] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [statusMessage, setStatusMessage] = useState(null);
+  const [copied, setCopied] = useState(false);
 
   const loadReports = useCallback(async () => {
     setLoading(true);
@@ -93,6 +99,18 @@ export default function ReportsPage() {
     }
   };
 
+  const handleCopyMarkdown = () => {
+    if (!selectedReport?.content) return;
+    navigator.clipboard.writeText(selectedReport.content).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2200);
+    });
+  };
+
+  const handlePrintPdf = () => {
+    window.print();
+  };
+
   return (
     <div className="reports-page">
       {/* Header */}
@@ -112,6 +130,7 @@ export default function ReportsPage() {
             className="btn btn-secondary" 
             onClick={loadReports} 
             disabled={loading}
+            title="Refresh reports catalog"
           >
             <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
             <span>Refresh</span>
@@ -127,12 +146,12 @@ export default function ReportsPage() {
 
       {/* Generator Controls */}
       <div className="report-generator-card">
-        <div style={{ fontSize: '1rem', fontWeight: 600, color: '#f1f5f9' }}>
+        <div style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text-main)' }}>
           Generate New System Report
         </div>
         <div className="generator-controls-row">
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
-            <label style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Report Type</label>
+            <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Report Type</label>
             <select 
               className="db-select"
               value={reportType}
@@ -146,7 +165,7 @@ export default function ReportsPage() {
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', flex: 1, minWidth: '220px' }}>
-            <label style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Custom Title (Optional)</label>
+            <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Custom Title (Optional)</label>
             <input 
               type="text"
               className="db-select"
@@ -172,7 +191,7 @@ export default function ReportsPage() {
       {/* Reports Split View: List on Left, Preview on Right */}
       <div className="db-columns-layout">
         {/* Left: Reports Catalog */}
-        <div className="db-panel">
+        <div className="db-panel reports-sidebar">
           <div className="db-panel-header">
             <div className="db-panel-title">
               <Table size={18} color="#38bdf8" />
@@ -180,37 +199,47 @@ export default function ReportsPage() {
             </div>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', maxHeight: '550px', overflowY: 'auto' }}>
-            {reports.map((rep) => {
-              const isSelected = selectedReport?.id === rep.id;
-              return (
-                <div 
-                  key={rep.id}
-                  onClick={() => setSelectedReport(rep)}
-                  style={{
-                    padding: '0.85rem 1rem',
-                    borderRadius: '8px',
-                    background: isSelected ? 'rgba(56, 189, 248, 0.15)' : 'rgba(30, 41, 59, 0.5)',
-                    border: isSelected ? '1px solid #38bdf8' : '1px solid rgba(255, 255, 255, 0.08)',
-                    cursor: 'pointer',
-                    transition: 'all 0.15s'
-                  }}
-                >
-                  <div style={{ fontWeight: 600, color: '#f8fafc', fontSize: '0.9rem' }}>
-                    {rep.report_title}
+          {loading && reports.length === 0 ? (
+            <SkeletonLoader variant="card" count={3} height="80px" />
+          ) : reports.length === 0 ? (
+            <EmptyState
+              icon={FileText}
+              title="No Reports Generated"
+              description="Click 'Generate Report' above to synthesize audit and incident post-mortems."
+            />
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', maxHeight: '550px', overflowY: 'auto' }}>
+              {reports.map((rep) => {
+                const isSelected = selectedReport?.id === rep.id;
+                return (
+                  <div 
+                    key={rep.id}
+                    onClick={() => setSelectedReport(rep)}
+                    style={{
+                      padding: '0.85rem 1rem',
+                      borderRadius: '8px',
+                      background: isSelected ? 'rgba(56, 189, 248, 0.15)' : 'var(--bg-card)',
+                      border: isSelected ? '1px solid #38bdf8' : '1px solid var(--border-color)',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s'
+                    }}
+                  >
+                    <div style={{ fontWeight: 600, color: 'var(--text-main)', fontSize: '0.9rem' }}>
+                      {rep.report_title}
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.35rem', fontSize: '0.74rem', color: 'var(--text-muted)' }}>
+                      <span>Type: <code>{rep.report_type}</code></span>
+                      <span>{new Date(rep.created_at).toLocaleDateString()}</span>
+                    </div>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.35rem', fontSize: '0.74rem', color: '#94a3b8' }}>
-                    <span>Type: <code>{rep.report_type}</code></span>
-                    <span>{new Date(rep.created_at).toLocaleDateString()}</span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Right: Report Viewer & Exporter */}
-        <div className="db-panel">
+        <div className="db-panel reports-preview-card">
           <div className="db-panel-header">
             <div className="db-panel-title">
               <FileCode size={18} color="#38bdf8" />
@@ -218,7 +247,27 @@ export default function ReportsPage() {
             </div>
 
             {selectedReport && (
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <button 
+                  className="btn-db-secondary" 
+                  style={{ padding: '0.35rem 0.75rem', fontSize: '0.78rem' }}
+                  onClick={handleCopyMarkdown}
+                  title="Copy Raw Markdown to Clipboard"
+                >
+                  {copied ? <Check size={13} color="#10b981" /> : <Copy size={13} />}
+                  <span>{copied ? 'Copied' : 'Copy MD'}</span>
+                </button>
+
+                <button 
+                  className="btn-db-secondary" 
+                  style={{ padding: '0.35rem 0.75rem', fontSize: '0.78rem' }}
+                  onClick={handlePrintPdf}
+                  title="Print / Save Executive PDF"
+                >
+                  <Printer size={13} />
+                  <span>Print PDF</span>
+                </button>
+
                 <button 
                   className="btn-db-secondary" 
                   style={{ padding: '0.35rem 0.75rem', fontSize: '0.78rem' }}
@@ -228,6 +277,7 @@ export default function ReportsPage() {
                   <Download size={13} />
                   <span>CSV</span>
                 </button>
+
                 <button 
                   className="btn-db-secondary" 
                   style={{ padding: '0.35rem 0.75rem', fontSize: '0.78rem' }}
@@ -243,7 +293,7 @@ export default function ReportsPage() {
 
           {selectedReport ? (
             <div>
-              <div style={{ marginBottom: '0.75rem', fontSize: '0.78rem', color: '#94a3b8' }}>
+              <div style={{ marginBottom: '0.75rem', fontSize: '0.78rem', color: 'var(--text-muted)' }}>
                 ID: <code>{selectedReport.id}</code> | Format: <code>{selectedReport.report_format}</code> | Source: <code>{selectedReport.data_source}</code>
               </div>
               <div className="report-preview-pane">
@@ -251,9 +301,11 @@ export default function ReportsPage() {
               </div>
             </div>
           ) : (
-            <div style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>
-              Select a report from the catalog to preview its content and export.
-            </div>
+            <EmptyState
+              icon={FileText}
+              title="No Report Selected"
+              description="Select a report from the catalog to preview its audit evidence, markdown, and export options."
+            />
           )}
         </div>
       </div>
